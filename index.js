@@ -5,7 +5,21 @@ var shell = require('child_process').exec
 fis.require.prefixes.unshift('pcat');
 fis.cli.name = 'pcat';
 fis.cli.info = require('./package.json');
-
+fis.cli.version = function(){
+    var version=[
+    '__/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_________/\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_',
+    ' _\\/\\\\\\/////////\\\\\\__\\/\\\\\\///////////_________/\\\\\\_\\/\\\\\\__\\///////\\\\\\/////_',
+    '  _\\/\\\\\\_______\\/\\\\\\__\\/\\\\\\___________________/\\\\\\__\\/\\\\\\________\\/\\\\\\_',
+    '   _\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\__\\/\\\\\\__________________/\\\\\\\\\\\\\\\\\\\\\\________\\/\\\\\\_',
+    '    _\\/\\\\\\///////////___\\/\\\\\\_________________/\\\\//////\\\\\\\\________\\/\\\\\\_',
+    '     _\\/\\\\\\______________\\/\\\\\\________________/\\\\\\_____\\/\\\\\\________\\/\\\\\\_',
+    '      _\\/\\\\\\______________\\/\\\\\\_______________/\\\\\\______\\/\\\\\\________\\/\\\\\\_',
+    '       _\\/\\\\\\______________\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\__/\\\\\\_______\\/\\\\\\________\\/\\\\\\_',
+    '        _\\///_______________\\///////////////__////________\\///_________\\///_',
+    '                                          '+('v'+ fis.cli.info.version).blue.bold
+    ].join("\n");
+    console.log(version+"====");
+}
 var path = require('path')
 var isMaster = !~process.argv.indexOf('--child-flag')
     // fis.pcSub = function(){
@@ -20,17 +34,22 @@ fis.pcat = function(option) {
     const packageJson = option.packageJson
     const site = path.resolve(fis.project.getProjectPath(), "../").split(path.sep).pop()
     // var pcat = fis.get('pcat');
-    const media = fis.project.currentMedia()
+    const media = fis.project.currentMedia() || 'dev'
 
     // 设置输出路径 
-    const outputDir = path.resolve(fis.project.getProjectPath(), "../../_output")
+    // const outputDir = path.resolve(fis.project.getProjectPath(), "../../_output")
+    const outputDir = path.resolve(fis.project.getTempPath(), "www")
 
     const MAP_DIR =  path.resolve(outputDir, media, "map", site)
     const STATIC_DIR = path.resolve(outputDir, media, "static", site)
     const TEMP_DIR = path.resolve(outputDir, media, "template", site)
     const PAGE_DIR = path.resolve(outputDir, media, "page", site)
 
-    const DOMAIN = option.domain
+    const DOMAIN = option.domain[media]
+
+    const DOMAIN_STATIC = media === 'dev' ? DOMAIN + '/static/' + site : DOMAIN + '/' + site
+    const DOMAIN_TEMP   = media === 'dev' ? DOMAIN + '/temp/' + site : DOMAIN + '/' + site
+    const DOMAIN_PAGE   = media === 'dev' ? DOMAIN + '/page/' + site : DOMAIN + '/' + site
 
     fis.set("PCAT", {
         useCombo: option.combo,
@@ -47,7 +66,7 @@ fis.pcat = function(option) {
     fis
       .match('(*)', {
         release: false,
-        domain:DOMAIN[media] + '/' + site
+        domain:DOMAIN_STATIC
       })
       .hook('commonjs')
       .media(media)
@@ -82,7 +101,8 @@ fis.pcat = function(option) {
         release: "${pc-project}/${pc-version}/$2",
         deploy: fis.plugin('local-deliver', {
             to: PAGE_DIR
-        })
+        }),
+        domain:DOMAIN_PAGE
       })
       .match(/^\/page\/(.*\/)*([^\/]+\.(?:png|jpg|gif)$)/i, {
           useHash: true,
@@ -196,7 +216,7 @@ fis.pcat = function(option) {
             mapOutputPath: MAP_DIR
           }),
           postpackager: fis.plugin("autocombo",{
-            domain: DOMAIN[media] + '/' + site,
+            domain: DOMAIN_STATIC,
             combo: fis.get("PCAT.useCombo")
           }),
           spriter: fis.plugin('csssprites')
