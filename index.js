@@ -7,18 +7,18 @@ fis.cli.name = 'pcat';
 fis.cli.info = require('./package.json');
 fis.cli.version = function(){
     var version=[
-    '__/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_________/\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_',
-    ' _\\/\\\\\\/////////\\\\\\__\\/\\\\\\///////////_________/\\\\\\_\\/\\\\\\__\\///////\\\\\\/////_',
+    '__/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_________/\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\',
+    ' _\\/\\\\\\/////////\\\\\\__\\/\\\\\\///////////_________/\\\\\\_\\/\\\\\\__\\///////\\\\\\/////',
     '  _\\/\\\\\\_______\\/\\\\\\__\\/\\\\\\___________________/\\\\\\__\\/\\\\\\________\\/\\\\\\_',
     '   _\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\__\\/\\\\\\__________________/\\\\\\\\\\\\\\\\\\\\\\________\\/\\\\\\_',
     '    _\\/\\\\\\///////////___\\/\\\\\\_________________/\\\\//////\\\\\\\\________\\/\\\\\\_',
     '     _\\/\\\\\\______________\\/\\\\\\________________/\\\\\\_____\\/\\\\\\________\\/\\\\\\_',
     '      _\\/\\\\\\______________\\/\\\\\\_______________/\\\\\\______\\/\\\\\\________\\/\\\\\\_',
     '       _\\/\\\\\\______________\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\__/\\\\\\_______\\/\\\\\\________\\/\\\\\\_',
-    '        _\\///_______________\\///////////////__////________\\///_________\\///_',
-    '                                          '+('v'+ fis.cli.info.version).blue.bold
+    '        _\\///_______________\\///////////////__////________\\///_________\\///__',
+    '\n                                    '+('v'+ fis.cli.info.version).yellow.bold
     ].join("\n");
-    console.log(version+"====");
+    fis.log.info('\n version: \n' + version.cyan.bold + '\n\n');
 }
 var path = require('path')
 var isMaster = !~process.argv.indexOf('--child-flag')
@@ -51,6 +51,7 @@ fis.pcat = function(option) {
     const DOMAIN_TEMP   = media === 'dev' ? DOMAIN + '/temp/' + site : DOMAIN + '/' + site
     const DOMAIN_PAGE   = media === 'dev' ? DOMAIN + '/page/' + site : DOMAIN + '/' + site
 
+    const USE_HASH = option.useHash ? !0 : (media === 'dev' ? !1 : !0)
     fis.set("PCAT", {
         useCombo: option.combo,
         project: packageJson.name,
@@ -71,27 +72,29 @@ fis.pcat = function(option) {
       .hook('commonjs')
       .media(media)
       .match(/^\/page\/(.*\/)*([^\/]+\.js$)/i, {
-          useHash: true,
+          useHash: USE_HASH,
           release: "${pc-project}/${pc-version}/j/$2",
           deploy: fis.plugin('local-deliver', {
               to: STATIC_DIR
           }),
           extras: {
-            comboTo:'7'
+            comboTo:'6',
+            comboOrder:2
           }
       })
       .match(/^\/page\/(.*\/)*([^\/]+\.(?:css|less|scss)$)/i, {
-          useHash: true,
+          useHash: USE_HASH,
           release: "${pc-project}/${pc-version}/c/$2",
           deploy: fis.plugin('local-deliver', {
               to: STATIC_DIR
           }),
           extras: {
-            comboTo:'7'
+            comboTo:'6',
+            comboOrder:2
           }
       })
       .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
-        // useHash: true,
+        // useHash: USE_HASH,
         useSameNameRequire: true,
         isPage: true,
         extras: {
@@ -105,43 +108,48 @@ fis.pcat = function(option) {
         domain:DOMAIN_PAGE
       })
       .match(/^\/page\/(.*\/)*([^\/]+\.(?:png|jpg|gif)$)/i, {
-          useHash: true,
+          useHash: USE_HASH,
           useMap:!0,
           release: "${pc-project}/${pc-version}/i/$2",
           deploy: fis.plugin('local-deliver', {
               to: STATIC_DIR
           })
       })
-      .match(/^\/widget\/(.*\/)*([^\/]+\.js$)/i, {
-          useHash: true,
-          release: "${pc-project}/${pc-version}/j/$2",
+      .match(/^\/widget\/(.*\/)*([^\/]+)\.js$/i, {
+          useHash: USE_HASH,
+          release: "${pc-project}/${pc-version}/j/$2.js",
           deploy: fis.plugin('local-deliver', {
               to: STATIC_DIR
           }),
+          id:'widget/$2',
+          moduleId:packageJson.name + ":widget/$2",
+          requireId:packageJson.name + ":widget/$2",
           isMod:!0,
           extras: {
-            comboTo:'6'
+            comboTo:'6',
+            comboOrder:1
           }
       })
       .match(/^\/widget\/(.*\/)*([^\/]+\.(?:css|less|scss)$)/i, {
-        useHash: true,
+        useHash: USE_HASH,
         release: "${pc-project}/${pc-version}/c/$2",
         deploy: fis.plugin('local-deliver', {
             to: STATIC_DIR
         }),
         extras: {
-          comboTo:'6'
+          comboTo:'6',
+          comboOrder:1
         }
       })
       .match(/^\/widget\/(.*\/)*([^\/]+\.(?:png|jpg|gif)$)/i, {
-          useHash: true,
+          useHash: USE_HASH,
           release: "${pc-project}/${pc-version}/i/$2",
           deploy: fis.plugin('local-deliver', {
               to: STATIC_DIR
           })
       })
       .match(/^\/widget\/(.*\/)*([^\/]+\.(?:html|cms|tpl)$)/i, {
-          useHash: true,
+          useHash: USE_HASH,
           isHtmlLike: true,
           isWidget: true,
           useSameNameRequire: true,
@@ -152,8 +160,19 @@ fis.pcat = function(option) {
           }),
           domain: ''
       })
-      .match(/^\/node_modules\/(pc\-.*?)\/index\.js/i,{
-        useHash: true,
+      .match(/^\/node_modules\/(.*?)\/(.*?\.)js/i,{
+        useHash: USE_HASH,
+        release: "${pc-project}/${pc-version}/j/$1_$2js",
+        deploy: fis.plugin('local-deliver', {
+            to: STATIC_DIR
+        }),
+        isMod:!0,
+        extras: {
+          comboTo:'5'
+        }
+      })
+      .match(/^\/node_modules\/(.*?)\/\1(\.js)/i,{
+        useHash: USE_HASH,
         release: "${pc-project}/${pc-version}/j/$1.js",
         id: "$1",
         moduleId:packageJson.name + ":$1",
@@ -167,12 +186,27 @@ fis.pcat = function(option) {
           comboTo:'5'
         }
       })
-      .match(/^\/node_modules\/(pc\-.*?)\/([^index]\.js)/i,{
-        useHash: true,
-        release: "${pc-project}/${pc-version}/j/$1_$2",
+      .match(/^\/node_modules\/(.*?)\/(.*?)\.css/i,{
+        useHash: USE_HASH,
+        release: "${pc-project}/${pc-version}/c/$1_$2.css",
         deploy: fis.plugin('local-deliver', {
             to: STATIC_DIR
         }),
+        isMod:!0,
+        extras: {
+          comboTo:'5'
+        }
+      })
+      .match(/^\/node_modules\/(.*?)\/\1\.css/i,{
+        useHash: USE_HASH,
+        release: "${pc-project}/${pc-version}/c/$1.css",
+        id: "$1",
+        moduleId:packageJson.name + ":$1",
+        requireId:packageJson.name + ":$1",
+        deploy: fis.plugin('local-deliver', {
+            to: STATIC_DIR
+        }),
+        alies:"$1",
         isMod:!0,
         extras: {
           comboTo:'5'
