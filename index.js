@@ -32,15 +32,16 @@ fis.set('project.ignore',['output/**','fis-conf.js']); // set 为覆盖不是叠
 fis.pcat = function(option) {
     var fis = this
     const packageJson = option.packageJson
-    const site = path.resolve(fis.project.getProjectPath(), "../").split(path.sep).pop()
+    const site = packageJson.site || path.resolve(fis.project.getProjectPath(), "../").split(path.sep).pop()
     // var pcat = fis.get('pcat');
     const media = fis.project.currentMedia() || 'dev'
 
     // 设置输出路径 
     // const outputDir = path.resolve(fis.project.getProjectPath(), "../../_output")
-    const outputDir = path.resolve(fis.project.getTempPath(), "www")
+    const outputDir =  media === 'dev' ? path.resolve(fis.project.getTempPath(), "www") : '/data/web/pcat/'
 
-    const MAP_DIR =  path.resolve(outputDir, media, "map", site)
+    const MAP_DIR = path.resolve(outputDir, media, "map", site)
+    const PACKAGE_DIR = path.resolve(outputDir, media, "package", site)
     const STATIC_DIR = path.resolve(outputDir, media, "static", site)
     const TEMP_DIR = path.resolve(outputDir, media, "template", site)
     const PAGE_DIR = path.resolve(outputDir, media, "page", site)
@@ -48,8 +49,10 @@ fis.pcat = function(option) {
     const DOMAIN = option.domain[media]
 
     const DOMAIN_STATIC = media === 'dev' ? DOMAIN + '/static/' + site : DOMAIN + '/' + site
-    const DOMAIN_TEMP   = media === 'dev' ? DOMAIN + '/temp/' + site : DOMAIN + '/' + site
-    const DOMAIN_PAGE   = media === 'dev' ? DOMAIN + '/page/' + site : DOMAIN + '/' + site
+    const DOMAIN_JS_CSS = media === 'dev' ? DOMAIN_STATIC : path.resolve(DOMAIN.static,'./'+site)
+    const DOMAIN_IMG    = media === 'dev' ? DOMAIN_STATIC : path.resolve(DOMAIN.img,'./'+site)
+    const DOMAIN_TEMP   = media === 'dev' ? DOMAIN + '/tpl/' + site : path.resolve(DOMAIN.tpl,'./'+site)
+    const DOMAIN_PAGE   = media === 'dev' ? DOMAIN + '/page/' + site : path.resolve(DOMAIN.page,'./'+site)
 
     const USE_HASH = option.useHash ? !0 : (media === 'dev' ? !1 : !0)
     fis.set("PCAT", {
@@ -67,7 +70,7 @@ fis.pcat = function(option) {
     fis
       .match('(*)', {
         release: false,
-        domain:DOMAIN_STATIC
+        domain:DOMAIN_JS_CSS
       })
       .hook('commonjs')
       .media(media)
@@ -113,7 +116,8 @@ fis.pcat = function(option) {
           release: "${pc-project}/${pc-version}/i/$2",
           deploy: fis.plugin('local-deliver', {
               to: STATIC_DIR
-          })
+          }),
+          domain:DOMAIN_IMG
       })
       .match(/^\/widget\/(.*\/)*([^\/]+)\.js$/i, {
           useHash: USE_HASH,
@@ -146,7 +150,8 @@ fis.pcat = function(option) {
           release: "${pc-project}/${pc-version}/i/$2",
           deploy: fis.plugin('local-deliver', {
               to: STATIC_DIR
-          })
+          }),
+          domain:DOMAIN_IMG
       })
       .match(/^\/widget\/(.*\/)*([^\/]+\.(?:html|cms|tpl)$)/i, {
           useHash: USE_HASH,
@@ -228,7 +233,8 @@ fis.pcat = function(option) {
               project: fis.get("PCAT.project"),
               tagName: fis.get("PCAT.tagName"),
               mapOutputPath: MAP_DIR,
-              templateOutputPath: TEMP_DIR
+              templateOutputPath: TEMP_DIR,
+              packageOutputPath:PACKAGE_DIR
           })
       })
       .match('**.css', {
@@ -247,7 +253,8 @@ fis.pcat = function(option) {
       .match("::package", {
           packager: fis.plugin("widget-render", {
             tagName: fis.get("PCAT.tagName"),
-            mapOutputPath: MAP_DIR
+            mapOutputPath: MAP_DIR,
+            packageOutputPath:PACKAGE_DIR
           }),
           postpackager: fis.plugin("autocombo",{
             domain: DOMAIN_STATIC,
@@ -260,6 +267,13 @@ fis.pcat = function(option) {
           release: "${pc-project}/${pc-version}/$0",
           deploy: fis.plugin('local-deliver', {
               to: MAP_DIR
+          })
+      })
+      .match("*package.json", {
+          useHash: false,
+          release: "${pc-project}/$0",
+          deploy: fis.plugin('local-deliver', {
+              to: PACKAGE_DIR
           })
       })
       if(media === 'qa' || media === 'ol'){

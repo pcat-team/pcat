@@ -1,6 +1,6 @@
 {
   "name": "pcat",
-  "version": "1.1.8",
+  "version": "1.1.12",
   "description": "pcground front-end node.js tool",
   "main": "index.js",
   "scripts": {
@@ -12,33 +12,64 @@
     "pcat",
     "fis"
   ],
-  "author": "JinC a275727449@gmail.com, guoxueming",
+  "author": {
+    "name": "JinC a275727449@gmail.com, guoxueming"
+  },
   "license": "MIT",
   "bin": {
     "pcat": "bin/pcat.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jincdream/pcat.git"
+    "url": "git+https://github.com/jincdream/pcat.git"
   },
   "dependencies": {
     "liftoff": "^2.1.0",
     "minimist": "^1.1.1",
     "fis-mini": "^3.3.0",
-    "fis3-hook-commonjs":"0.1.8",
-    "fis3-parser-widget-load":"*",
-    "fis3-hook-components":"*",
-    "fis3-postpackager-autocombo":"*",
-    
-    "fis3-packager-widget-render":"*",
-    "fis3-parser-widget-load":"*",
-    "pcat-command-server":"*",
-    "pcat-command-create":"*",
-    "pcat-command-www1":"*",
-    "pcat-server-node":"*"
+    "fis3-hook-commonjs": "0.1.8",
+    "pcat-parser-widget-load": "*",
+    "fis3-hook-components": "*",
+    "fis3-postpackager-autocombo": "*",
+    "pcat-packager-widget-render": "*",
+    "pcat-command-server": "*",
+    "pcat-command-create": "*",
+    "pcat-command-www1": "*",
+    "pcat-server-node": "*"
   },
   "bugs": {
     "url": "https://github.com/jincdream/pcat/issues"
   },
-  "homepage": "https://github.com/jincdream/pcat"
+  "homepage": "https://github.com/jincdream/pcat",
+  "gitHead": "313914b6397ff52b4d860df604062fe8e0b099b4",
+  "_id": "pcat@1.1.12",
+  "_shasum": "8c4225eda1e42d106a2f7ace8e3c3ed2189ca984",
+  "_from": "pcat@latest",
+  "_npmVersion": "2.14.12",
+  "_nodeVersion": "4.2.5",
+  "_npmUser": {
+    "name": "jincdream",
+    "email": "275727449@qq.com"
+  },
+  "dist": {
+    "shasum": "8c4225eda1e42d106a2f7ace8e3c3ed2189ca984",
+    "tarball": "http://registry.npmjs.org/pcat/-/pcat-1.1.12.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "guoxmin",
+      "email": "guo469477762@gmail.com"
+    },
+    {
+      "name": "jincdream",
+      "email": "275727449@qq.com"
+    }
+  ],
+  "_npmOperationalInternal": {
+    "host": "packages-13-west.internal.npmjs.com",
+    "tmp": "tmp/pcat-1.1.12.tgz_1457079304544_0.44855754752643406"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/pcat/-/pcat-1.1.12.tgz",
+  "readme": "ERROR: No README data found!"
 }
