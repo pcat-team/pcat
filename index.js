@@ -269,7 +269,7 @@ fis.pcat = function(option) {
               to: MAP_DIR
           })
       })
-      .match("*package.json", {
+      .match("/package.json", {
           useHash: false,
           release: "${pc-project}/$0",
           deploy: fis.plugin('local-deliver', {
