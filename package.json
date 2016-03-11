@@ -12,25 +12,27 @@
     "pcat",
     "fis"
   ],
-  "author": "JinC a275727449@gmail.com, guoxueming",
+  "author": {
+    "name": "JinC a275727449@gmail.com, guoxueming"
+  },
   "license": "MIT",
   "bin": {
     "pcat": "bin/pcat.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jincdream/pcat.git"
+    "url": "git+https://github.com/jincdream/pcat.git"
   },
   "dependencies": {
     "liftoff": "^2.1.0",
     "minimist": "^1.1.1",
     "fis-mini": "^3.3.0",
     "fis3-hook-commonjs":"0.1.8",
-    "fis3-parser-widget-load":"*",
     "fis3-hook-components":"*",
     "fis3-postpackager-autocombo":"*",
     
-    "fis3-packager-widget-render":"*",
+    "pcat-parser-widget-load": "*",
+    "pcat-packager-widget-render": "*",
     "fis3-parser-widget-load":"*",
     "pcat-command-server":"*",
     "pcat-command-create":"*",

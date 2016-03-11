@@ -37,15 +37,13 @@ fis.pcat = function(option) {
     const media = fis.project.currentMedia() || 'dev'
 
     // 设置输出路径 
-    // const outputDir = path.resolve(fis.project.getProjectPath(), "../../_output")
-      
-
 
     // const outputDir =  media === 'dev' ? path.resolve(fis.project.getTempPath(), "www") : '/data/web/pcat/'
 
     const outputDir = path.resolve(fis.project.getTempPath(), "www")
 
     const MAP_DIR = path.resolve(outputDir, './' +media, "./map", './'+site)
+    const PACKAGE_DIR = path.resolve(outputDir, './' +media, "./package", './'+site)
     const STATIC_DIR = path.resolve(outputDir, './' +media, "./static", './'+site)
     const TEMP_DIR = path.resolve(outputDir, './' +media, "./template", './'+site)
     const PAGE_DIR = path.resolve(outputDir, './' +media, "./page", './'+site)
@@ -57,6 +55,7 @@ fis.pcat = function(option) {
     const DOMAIN_IMG    = media === 'dev' ? DOMAIN_STATIC : DOMAIN.img + '/' + site
     const DOMAIN_TEMP   = media === 'dev' ? DOMAIN + '/dev/tpl/' + site : DOMAIN.tpl + '/' + site
     const DOMAIN_PAGE   = media === 'dev' ? DOMAIN + '/dev/page/' + site : DOMAIN.page + '/' + site
+
 
     const USE_HASH = option.useHash ? !0 : (media === 'dev' ? !1 : !0)
 
@@ -239,7 +238,8 @@ fis.pcat = function(option) {
               project: fis.get("PCAT.project"),
               tagName: fis.get("PCAT.tagName"),
               mapOutputPath: MAP_DIR,
-              templateOutputPath: TEMP_DIR
+              templateOutputPath: TEMP_DIR,
+              packageOutputPath:PACKAGE_DIR
           })
       })
       .match('**.css', {
@@ -258,7 +258,8 @@ fis.pcat = function(option) {
       .match("::package", {
           packager: fis.plugin("widget-render", {
             tagName: fis.get("PCAT.tagName"),
-            mapOutputPath: MAP_DIR
+            mapOutputPath: MAP_DIR,
+            packageOutputPath:PACKAGE_DIR
           }),
           postpackager: fis.plugin("autocombo",{
             domain: DOMAIN_STATIC,
@@ -266,11 +267,18 @@ fis.pcat = function(option) {
           }),
           spriter: fis.plugin('csssprites')
       })
-      .match("*map.json", {
+      .match("/map.json", {
           useHash: false,
           release: "${pc-project}/${pc-version}/$0",
           deploy: fis.plugin('local-deliver', {
               to: MAP_DIR
+          })
+      })
+      .match("/package.json", {
+          useHash: false,
+          release: "${pc-project}/$0",
+          deploy: fis.plugin('local-deliver', {
+              to: PACKAGE_DIR
           })
       })
       if(media === 'qa' || media === 'ol'){
