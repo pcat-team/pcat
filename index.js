@@ -38,22 +38,29 @@ fis.pcat = function(option) {
 
     // 设置输出路径 
     // const outputDir = path.resolve(fis.project.getProjectPath(), "../../_output")
-    const outputDir =  media === 'dev' ? path.resolve(fis.project.getTempPath(), "www") : '/data/web/pcat/'
+      
 
-    const MAP_DIR = path.resolve(outputDir, media, "map", site)
-    const STATIC_DIR = path.resolve(outputDir, media, "static", site)
-    const TEMP_DIR = path.resolve(outputDir, media, "template", site)
-    const PAGE_DIR = path.resolve(outputDir, media, "page", site)
+
+    // const outputDir =  media === 'dev' ? path.resolve(fis.project.getTempPath(), "www") : '/data/web/pcat/'
+
+    const outputDir = path.resolve(fis.project.getTempPath(), "www")
+
+    const MAP_DIR = path.resolve(outputDir, './' +media, "./map", './'+site)
+    const STATIC_DIR = path.resolve(outputDir, './' +media, "./static", './'+site)
+    const TEMP_DIR = path.resolve(outputDir, './' +media, "./template", './'+site)
+    const PAGE_DIR = path.resolve(outputDir, './' +media, "./page", './'+site)
 
     const DOMAIN = option.domain[media]
 
-    const DOMAIN_STATIC = media === 'dev' ? DOMAIN + '/static/' + site : DOMAIN + '/' + site
-    const DOMAIN_JS_CSS = media === 'dev' ? DOMAIN_STATIC : path.resolve(DOMAIN.static,'./'+site)
-    const DOMAIN_IMG    = media === 'dev' ? DOMAIN_STATIC : path.resolve(DOMAIN.img,'./'+site)
-    const DOMAIN_TEMP   = media === 'dev' ? DOMAIN + '/tpl/' + site : path.resolve(DOMAIN.tpl,'./'+site)
-    const DOMAIN_PAGE   = media === 'dev' ? DOMAIN + '/page/' + site : path.resolve(DOMAIN.page,'./'+site)
+    const DOMAIN_STATIC = media === 'dev' ? DOMAIN + '/dev/static/' + site : DOMAIN.static + '/' + site
+    const DOMAIN_JS_CSS = media === 'dev' ? DOMAIN_STATIC : DOMAIN.static + '/' + site
+    const DOMAIN_IMG    = media === 'dev' ? DOMAIN_STATIC : DOMAIN.img + '/' + site
+    const DOMAIN_TEMP   = media === 'dev' ? DOMAIN + '/dev/tpl/' + site : DOMAIN.tpl + '/' + site
+    const DOMAIN_PAGE   = media === 'dev' ? DOMAIN + '/dev/page/' + site : DOMAIN.page + '/' + site
 
     const USE_HASH = option.useHash ? !0 : (media === 'dev' ? !1 : !0)
+
+    fis.log.info(outputDir,TEMP_DIR)
     fis.set("PCAT", {
         useCombo: option.combo,
         project: packageJson.name,
