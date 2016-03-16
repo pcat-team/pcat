@@ -31,7 +31,7 @@ args[_argIndex].split('+').forEach(function(value){
     releaseConfig[RegExp.$1] = RegExp.$2
   }
 })
-var userName = releaseConfig.user || ''
+var userName = releaseConfig.author || ''
 // console.log(releaseConfig,userName,args)
 // var userName = /user\:(.*)(?:\|+?|^\|$)/.test(args[args.length - 1]) ? RegExp.$1 : ''
 // console.log(userName)
@@ -69,7 +69,7 @@ fis.pcat = function(option) {
         'tpl':'http://pcat.pc.com.cn/online/tpl'
       }
     }
-    const orgInfo          = `\npath : \${pc-project}$0\ntag : ${releaseConfig.tag||''}\nuser : ${releaseConfig.user||''}\nupdate : ${_now.toLocaleString()}\n`
+    const orgInfo          = `  path : \${pc-project}$0  tag : ${releaseConfig.tag||''}  update by ${releaseConfig.author||''} at ${_now.toLocaleString()}  `
     const staticOrg        = function(content, file, conf){return `/*! ${file.release}*/\n${content}`}
     const packageJson      = option.packageJson
     const site             = packageJson.site || path.resolve(fis.project.getProjectPath(), "../").split(path.sep).pop()
@@ -122,6 +122,8 @@ fis.pcat = function(option) {
     fis.set('namespace', packageJson.name);
     fis.set('pc-project', packageJson.name);
     fis.set('pc-version', packageJson.version);
+
+    media!== 'dev' && console.log(`preview(${DOMAIN_PAGE}/${packageJson.name}/${packageJson.version}/)`)
 
     fis
       .match('(*)', {
@@ -233,7 +235,7 @@ fis.pcat = function(option) {
           comboTo:'5'
         }
       })
-      .match(/^\/node_modules\/(.*?)\/\1(\.js)$/i,{
+      .match(/^\/node_modules\/(.*?)\/(?:\1|index)(\.js)$/i,{
         useHash: USE_HASH,
         release: "${pc-project}/${pc-version}/j/$1.js",
         id: "$1",
@@ -274,13 +276,13 @@ fis.pcat = function(option) {
           comboTo:'5'
         }
       })
-      .match('/node_modules/pc-require/*.js$',{
+      .match('/node_modules/pc-require/*.js',{
         isMod:!1,
         extras: {
           comboTo:'-111'
         }
       })
-      .match('/node_modules/pc-jquery/*.js$',{
+      .match('/node_modules/pc-jquery/*.js',{
         extras: {
           comboTo:'-112'
         }
@@ -320,6 +322,10 @@ fis.pcat = function(option) {
             if(!file.orgInfo)return;
             let content = file.getContent()
             file.setContent(`<!--${file.orgInfo}-->\n${content}`)
+            //for server preview
+            let hash = file.getHash()
+            let root = `/${media}/page/${site}/${file.release.replace('\.html',`_${hash}.html`)}`
+            file.extras ? (file.extras.hash = hash,file.extras.path = root) : file.extras = {hash:hash,path:root}
           })
         },
         packager: fis.plugin("widget-render", {
