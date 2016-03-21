@@ -1,6 +1,6 @@
 {
   "name": "pcat",
-  "version": "1.2.0",
+  "version": "1.2.3",
   "description": "pcground front-end node.js tool",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,6 @@
     
     "pcat-parser-widget-load": "*",
     "pcat-packager-widget-render": "*",
-    "fis3-parser-widget-load":"*",
     "pcat-command-server":"*",
     "pcat-command-create":"*",
     "pcat-command-www1":"*",

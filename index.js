@@ -47,7 +47,7 @@ fis.pcat = function(option) {
     var commonConfig = {api:'dev6.pconline.com.cn:8002'}
     const _now = new Date
 
-    const projectType = option.type || 'cms'
+    // const projectType = option.type || 'cms'
     const domain = {
       dev: option.domain.dev,
       qa: {
@@ -324,7 +324,7 @@ fis.pcat = function(option) {
             file.setContent(`<!--${file.orgInfo}-->\n${content}`)
             //for server preview
             let hash = file.getHash()
-            let root = `/${media}/page/${site}/${file.release.replace('\.html',`_${hash}.html`)}`
+            let root = `/${media}/page/${site}${media ==='dev' ? file.release : file.release.replace('\.html',`_${hash}.html`)}`
             file.extras ? (file.extras.hash = hash,file.extras.path = root) : file.extras = {hash:hash,path:root}
           })
         },
@@ -353,9 +353,6 @@ fis.pcat = function(option) {
             to: PACKAGE_DIR
         })
       })
-      .match("*.html",{
-        // optimizer: 
-      })
       .match("*.{js,css,scss,less}",{
         optimizer: staticOrg
       })
@@ -377,7 +374,7 @@ fis.pcat = function(option) {
             optimizer: fis.plugin('png-compressor')
           })
       }
-      if(projectType === 'cms' && (media === 'ol'|| media === 'online')){
+      if(!!userName && (media === 'ol'|| media === 'online')){
         fis
           .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
             deploy: [fis.plugin('local-deliver', {
