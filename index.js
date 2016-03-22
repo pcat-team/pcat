@@ -140,7 +140,7 @@ fis.pcat = function(option) {
           }),
           extras: {
             comboTo:'6',
-            comboOrder:2
+            comboOrder:3
           }
       })
       .match(/^\/page\/(.*\/)*([^\/]+\.(?:css|less|scss)$)/i, {
@@ -151,7 +151,7 @@ fis.pcat = function(option) {
           }),
           extras: {
             comboTo:'6',
-            comboOrder:2
+            comboOrder:3
           }
       })
       .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
@@ -190,7 +190,23 @@ fis.pcat = function(option) {
         isMod:!0,
         extras: {
           comboTo:'6',
-          comboOrder:1
+          comboOrder:2
+        }
+      })
+      .match(/^\/widget\/(.*?)\/((?:\1|index))\.js$/i, {
+        useHash: USE_HASH,
+        release: "${pc-project}/${pc-version}/j/$2.js",
+        deploy: fis.plugin('local-deliver', {
+            to: STATIC_DIR
+        }),
+        id:'widget/$2',
+        parser:function(content,file){
+          return `;(function (window,document,undefined){\n${content}\n})(window,docuemnt);`
+        },
+        isMod:!1,
+        extras: {
+          comboTo:'6',
+          comboOrder:2
         }
       })
       .match(/^\/widget\/(.*\/)*([^\/]+\.(?:css|less|scss)$)/i, {
