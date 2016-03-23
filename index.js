@@ -69,7 +69,7 @@ fis.pcat = function(option) {
         'tpl':'http://pcat.pc.com.cn/online/tpl'
       }
     }
-    const orgInfo          = `  path : \${pc-project}$0  tag : ${releaseConfig.tag||''}  update by ${releaseConfig.author||''} at ${_now.toLocaleString()}  `
+    const orgInfo          = `path:\${pc-project}$0  tag:${releaseConfig.tag||''}  update by ${releaseConfig.author||''} at ${_now.toLocaleString()}`
     const staticOrg        = function(content, file, conf){return `/*! ${file.release}*/\n${content}`}
     const packageJson      = option.packageJson
     const site             = packageJson.site || path.resolve(fis.project.getProjectPath(), "../").split(path.sep).pop()
@@ -132,12 +132,15 @@ fis.pcat = function(option) {
       })
       .hook('commonjs')
       .media(media)
-      .match(/^\/page\/(.*\/)*([^\/]+\.js$)/i, {
+      .match(/^\/page\/(.*?)\/((?:\1|index))\.js$/i, {
           useHash: USE_HASH,
-          release: "${pc-project}/${pc-version}/j/$2",
+          release: "${pc-project}/${pc-version}/j/$2.js",
           deploy: fis.plugin('local-deliver', {
               to: STATIC_DIR
           }),
+          parser:function(content,file){
+            return `;(function (window,document,undefined){\n${content}\n})(window,document);`
+          },
           extras: {
             comboTo:'6',
             comboOrder:3
@@ -201,7 +204,7 @@ fis.pcat = function(option) {
         }),
         id:'widget/$2',
         parser:function(content,file){
-          return `;(function (window,document,undefined){\n${content}\n})(window,docuemnt);`
+          return `;(function (window,document,undefined){\n${content}\n})(window,document);`
         },
         isMod:!1,
         extras: {
