@@ -201,7 +201,7 @@ fis.pcat = function(option) {
         }),
         id:'widget/$2',
         parser:function(content,file){
-          return `;(function (window,document,undefined){\n${content}\n})(window,docuemnt);`
+          return `;(function (window,document,undefined){\n${content}\n})(window,document);`
         },
         isMod:!1,
         extras: {
