@@ -42,37 +42,43 @@ var userName = releaseConfig.author || ''
 // }
 fis.set('project.ignore',['output/**','fis-conf.js']); // set 为覆盖不是叠加
 
+// 自动定位requrie的id
+fis.config.set("component.dir","node_modules");
+
+
 fis.pcat = function(option) {
     var fis                = this
     var commonConfig = {api:'dev6.pconline.com.cn:8002'}
     const _now = new Date
 
-    // const projectType = option.type || 'cms'
-    const domain = {
-      dev: option.domain.dev,
-      qa: {
-        'static': 'http://ue.pc.com.cn',
-        'img': 'http://ueimg.pc.com.cn',
-        'page':'http://pcat.pc.com.cn/qa/page',
-        'tpl':'http://pcat.pc.com.cn/qa/tpl'
-      },
-      ol: {
-        'static': 'http://ue.3conline.com',
-        'img': 'http://ueimg.3conline.com',
-        'page':'http://pcat.pc.com.cn/ol/page',
-        'tpl':'http://pcat.pc.com.cn/ol/tpl'
-      },
-      online: {
-        'static': 'http://ue.3conline.com',
-        'img': 'http://ueimg.3conline.com',
-        'page':'http://pcat.pc.com.cn/online/page',
-        'tpl':'http://pcat.pc.com.cn/online/tpl'
-      }
-    }
+   
     const orgInfo          = `path:\${pc-project}$0  tag:${releaseConfig.tag||''}  update by ${releaseConfig.author||''} at ${_now.toLocaleString()}`
     const staticOrg        = function(content, file, conf){return `/*! ${file.release}*/\n${content}`}
     const packageJson      = option.packageJson
     const site             = packageJson.site || path.resolve(fis.project.getProjectPath(), "../").split(path.sep).pop()
+
+     // const projectType = option.type || 'cms'
+     const domain = {
+      dev: option.domain.dev,
+      qa: {
+        'static': 'http://ue.pc.com.cn',
+        'img': 'http://ueimg.pc.com.cn',
+        'page':'http://zzpcat.'+site+'.com.cn/qa/page',
+        'tpl':'http://zzpcat.'+site+'.com.cn/qa/tpl'
+      },
+      ol: {
+        'static': 'http://ue.3conline.com',
+        'img': 'http://ueimg.3conline.com',
+        'page':'http://zzpcat.'+site+'.com.cn/ol/page',
+        'tpl':'http://zzpcat.'+site+'.com.cn/ol/tpl'
+      },
+      online: {
+        'static': 'http://ue.3conline.com',
+        'img': 'http://ueimg.3conline.com',
+        'page':'http://zzpcat.'+site+'.com.cn/online/page',
+        'tpl':'http://zzpcat.'+site+'.com.cn/online/tpl'
+      }
+    }
     
     const tempPath         = fis.project.getTempPath()
     const commonConfigPath = option.commonConfigPath || path.resolve(tempPath,'_config.js')
@@ -109,6 +115,8 @@ fis.pcat = function(option) {
     const USE_HASH         = option.useHash ? !0 : (media === 'dev' ? !1 : !0)
     // const USE_HASH = !1
     
+
+
 
     // fis.log.info(outputDir,TEMP_DIR)
     fis.set("PCAT", {
