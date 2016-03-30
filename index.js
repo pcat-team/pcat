@@ -43,7 +43,7 @@ var userName = releaseConfig.author || ''
 fis.set('project.ignore',['output/**','fis-conf.js']); // set 为覆盖不是叠加
 
 // 自动定位requrie的id
-fis.config.set("component.dir","node_modules");
+fis.config.set("component.dir","modules");
 
 
 fis.pcat = function(option) {
@@ -251,7 +251,7 @@ fis.pcat = function(option) {
         }),
         domain: ''
       })
-      .match(/^\/node_modules\/(.*?)\/(.*?\.)js$/i,{
+      .match(/^\/modules\/(.*?)\/(.*?\.)js$/i,{
         useHash: USE_HASH,
         release: "${pc-project}/${pc-version}/j/$1_$2js",
         deploy: fis.plugin('local-deliver', {
@@ -262,7 +262,7 @@ fis.pcat = function(option) {
           comboTo:'5'
         }
       })
-      .match(/^\/node_modules\/(.*?)\/(?:\1|index)(\.js)$/i,{
+      .match(/^\/modules\/(.*?)\/(?:\1|index)(\.js)$/i,{
         useHash: USE_HASH,
         release: "${pc-project}/${pc-version}/j/$1.js",
         id: "$1",
@@ -277,7 +277,7 @@ fis.pcat = function(option) {
           comboTo:'5'
         }
       })
-      .match(/^\/node_modules\/(.*?)\/(.*?)\.css/i,{
+      .match(/^\/modules\/(.*?)\/(.*?)\.css/i,{
         useHash: USE_HASH,
         release: "${pc-project}/${pc-version}/c/$1_$2.css",
         deploy: fis.plugin('local-deliver', {
@@ -288,7 +288,7 @@ fis.pcat = function(option) {
           comboTo:'5'
         }
       })
-      .match(/^\/node_modules\/(.*?)\/\1\.css/i,{
+      .match(/^\/modules\/(.*?)\/\1\.css/i,{
         useHash: USE_HASH,
         release: "${pc-project}/${pc-version}/c/$1.css",
         id: "$1",
@@ -303,13 +303,13 @@ fis.pcat = function(option) {
           comboTo:'5'
         }
       })
-      .match('/node_modules/pc-require/*.js',{
+      .match('/modules/pc-require/*.js',{
         isMod:!1,
         extras: {
           comboTo:'-111'
         }
       })
-      .match('/node_modules/pc-jquery/*.js',{
+      .match('/modules/pc-jquery/*.js',{
         extras: {
           comboTo:'-112'
         }
