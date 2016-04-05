@@ -20,6 +20,10 @@ fis.cli.version = function(){
     ].join("\n");
     fis.log.info('\n version: \n' + version.cyan.bold + '\n\n');
 }
+
+// 添加命令描述
+fis.set("modules.commands",["release","server","create","cnpm"])
+
 var path = require('path')
 var args = process.argv
 var isMaster = !~args.indexOf('--child-flag')
