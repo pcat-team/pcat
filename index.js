@@ -95,7 +95,7 @@ fis.pcat = function(option) {
   //   fis.log.info(e,'\n  please set common config!')
   // }
   // var pcat            = fis.get('pcat');
-  const useWigetList     = fis.project.currentMedia() === 'showWidgets'
+  const useWigetList     = fis.project.currentMedia() === 'widget'
   const media            = useWigetList ? 'dev' : (fis.project.currentMedia() || 'dev')  
 
   // 设置输出路径 
