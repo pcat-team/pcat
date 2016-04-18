@@ -6,125 +6,127 @@ var shell = require('child_process').exec
 fis.require.prefixes.unshift('pcat');
 fis.cli.name = 'pcat';
 fis.cli.info = require('./package.json');
-fis.cli.version = function(){
-    var version=[
-    '  /\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_________/\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\',
-    '  \\/\\\\\\/////////\\\\\\__\\/\\\\\\///////////_________/\\\\\\_\\/\\\\\\__\\///////\\\\\\/////',
-    '   \\/\\\\\\_______\\/\\\\\\__\\/\\\\\\___________________/\\\\\\__\\/\\\\\\________\\/\\\\\\',
-    '    \\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\__\\/\\\\\\__________________/\\\\\\\\\\\\\\\\\\\\\\________\\/\\\\\\',
-    '     \\/\\\\\\///////////___\\/\\\\\\_________________/\\\\//////\\\\\\\\________\\/\\\\\\',
-    '      \\/\\\\\\______________\\/\\\\\\________________/\\\\\\_____\\/\\\\\\________\\/\\\\\\',
-    '       \\/\\\\\\______________\\/\\\\\\_______________/\\\\\\______\\/\\\\\\________\\/\\\\\\',
-    '        \\/\\\\\\______________\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\__/\\\\\\_______\\/\\\\\\________\\/\\\\\\',
-    '         \\///_______________\\///////////////__////________\\///_________\\///',
-    '\n                                          '+('v'+ fis.cli.info.version).yellow.bold
-    ].join("\n");
-    fis.log.info('\n version: \n' + version.cyan.bold + '\n\n');
-}
-// 添加命令描述
-fis.set("modules.commands",["release","server","create","cnpm"])
+fis.cli.version = function() {
+        var version = [
+            '  /\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_________/\\\\\\\\\\\\\\\\___/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\',
+            '  \\/\\\\\\/////////\\\\\\__\\/\\\\\\///////////_________/\\\\\\_\\/\\\\\\__\\///////\\\\\\/////',
+            '   \\/\\\\\\_______\\/\\\\\\__\\/\\\\\\___________________/\\\\\\__\\/\\\\\\________\\/\\\\\\',
+            '    \\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\__\\/\\\\\\__________________/\\\\\\\\\\\\\\\\\\\\\\________\\/\\\\\\',
+            '     \\/\\\\\\///////////___\\/\\\\\\_________________/\\\\//////\\\\\\\\________\\/\\\\\\',
+            '      \\/\\\\\\______________\\/\\\\\\________________/\\\\\\_____\\/\\\\\\________\\/\\\\\\',
+            '       \\/\\\\\\______________\\/\\\\\\_______________/\\\\\\______\\/\\\\\\________\\/\\\\\\',
+            '        \\/\\\\\\______________\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\__/\\\\\\_______\\/\\\\\\________\\/\\\\\\',
+            '         \\///_______________\\///////////////__////________\\///_________\\///',
+            '\n                                          ' + ('v' + fis.cli.info.version).yellow.bold
+        ].join("\n");
+        fis.log.info('\n version: \n' + version.cyan.bold + '\n\n');
+    }
+    // 添加命令描述
+fis.set("modules.commands", ["release", "server", "create", "cnpm"])
 
 var path = require('path')
 var args = process.argv
 var isMaster = !~args.indexOf('--child-flag')
 var _argIndex = args.length - 1
-if(!isMaster)_argIndex--;
+if (!isMaster) _argIndex--;
 var releaseConfig = {}
-args[_argIndex].split('+').forEach(function(value){
-  if(/(.*?)\:(.*)/.test(value)){
-    releaseConfig[RegExp.$1] = RegExp.$2
-  }
+args[_argIndex].split('+').forEach(function(value) {
+    if (/(.*?)\:(.*)/.test(value)) {
+        releaseConfig[RegExp.$1] = RegExp.$2
+    }
 })
 var userName = releaseConfig.author || ''
-// console.log(releaseConfig,userName,args)
-// var userName = /user\:(.*)(?:\|+?|^\|$)/.test(args[args.length - 1]) ? RegExp.$1 : ''
-// console.log(userName)
+    // console.log(releaseConfig,userName,args)
+    // var userName = /user\:(.*)(?:\|+?|^\|$)/.test(args[args.length - 1]) ? RegExp.$1 : ''
+    // console.log(userName)
     // fis.pcSub = function(){
     //   isMaster && console.log('-------------------------- ',fis.get('output'),' --------------------------')
 
 //   isMaster && shell('start ' + 'chrome' + ' "'+ 'http://127.0.0.1:8090/' + fis.get('namespace') + '/index.html?t=' +(+new Date) +'"')
 // }
-fis.set('project.ignore',['output/**','fis-conf.js','node_modules/**']); // set 为覆盖不是叠加
+fis.set('project.ignore', ['output/**', 'fis-conf.js', 'node_modules/**']); // set 为覆盖不是叠加
 
 // 自动定位requrie的id
-fis.config.set("component.dir","modules");
+fis.config.set("component.dir", "modules");
 
 fis.pcat = function(option) {
-  var fis                = this
-  var commonConfig = {api:'dev6.pconline.com.cn:8002'}
+        var fis = this
+        var commonConfig = { api: 'dev6.pconline.com.cn:8002' }
 
 
 
-  const _now             = new Date
+        const _now = new Date
 
-  const projectDir       = fis.project.getProjectPath()
-  const orgInfo          = `path:\${pc-project}$0  tag:${releaseConfig.tag||''}  update by ${releaseConfig.author||''} at ${_now.toLocaleString()}`
-  const staticOrg        = function(content, file, conf){return `/*! ${file.release}*/\n${content}`}
-  const packageJson      = option.packageJson
-  const site             = packageJson.site || path.resolve(projectDir, "../").split(path.sep).pop()
+        const projectDir = fis.project.getProjectPath()
+        const orgInfo = `path:\${pc-project}$0  tag:${releaseConfig.tag||''}  update by ${releaseConfig.author||''} at ${_now.toLocaleString()}`
+        const staticOrg = function(content, file, conf) {
+            return `/*! ${file.release}*/\n${content}`
+        }
+        const packageJson = option.packageJson
+        const site = packageJson.site || path.resolve(projectDir, "../").split(path.sep).pop()
 
-   // const projectType = option.type || 'cms'
-  const domain = {
-    dev: option.domain.dev,
-    qa: {
-      'static': 'http://ue.pc.com.cn',
-      'img': 'http://ueimg.pc.com.cn',
-      'page':'http://zzpcat.'+site+'.com.cn/qa/page',
-      'tpl':'http://zzpcat.'+site+'.com.cn/qa/tpl'
-    },
-    ol: {
-      'static': 'http://ue.3conline.com',
-      'img': 'http://ueimg.3conline.com',
-      'page':'http://zzpcat.'+site+'.com.cn/ol/page',
-      'tpl':'http://zzpcat.'+site+'.com.cn/ol/tpl'
-    },
-    online: {
-      'static': 'http://ue.3conline.com',
-      'img': 'http://ueimg.3conline.com',
-      'page':'http://zzpcat.'+site+'.com.cn/online/page',
-      'tpl':'http://zzpcat.'+site+'.com.cn/online/tpl'
-    }
-  }
-  
-  const tempPath         = fis.project.getTempPath()
-  const commonConfigPath = option.commonConfigPath || path.resolve(tempPath,'_config.js')
-  // try{
-  //   commonConfig         = require(commonConfigPath)
-  // }catch(e){
-  //   commonConfig         = {}
-  //   fis.log.info(e,'\n  please set common config!')
-  // }
-  // var pcat            = fis.get('pcat');
-  const useWigetList     = fis.project.currentMedia() === 'widget'
-  const media            = useWigetList ? 'dev' : (fis.project.currentMedia() || 'dev')  
+        // const projectType = option.type || 'cms'
+        const domain = {
+            dev: option.domain.dev,
+            qa: {
+                'static': 'http://ue.pc.com.cn',
+                'img': 'http://ueimg.pc.com.cn',
+                'page': 'http://zzpcat.' + site + '.com.cn/qa/page',
+                'tpl': 'http://zzpcat.' + site + '.com.cn/qa/tpl'
+            },
+            ol: {
+                'static': 'http://ue.3conline.com',
+                'img': 'http://ueimg.3conline.com',
+                'page': 'http://zzpcat.' + site + '.com.cn/ol/page',
+                'tpl': 'http://zzpcat.' + site + '.com.cn/ol/tpl'
+            },
+            online: {
+                'static': 'http://ue.3conline.com',
+                'img': 'http://ueimg.3conline.com',
+                'page': 'http://zzpcat.' + site + '.com.cn/online/page',
+                'tpl': 'http://zzpcat.' + site + '.com.cn/online/tpl'
+            }
+        }
 
-  // 设置输出路径 
-  
-  // const outputDir     =  media === 'dev' ? path.resolve(tempPath, "www") : '/data/web/pcat/'
-  
-  const outputDir        = path.resolve(tempPath, "www")
-  
-  const MAP_DIR          = path.resolve(outputDir, './' +media, "./map", './'+site)
-  const PACKAGE_DIR      = path.resolve(outputDir, './' +media, "./package", './'+site)
-  const STATIC_DIR       = path.resolve(outputDir, './' +media, "./static", './'+site)
-  const TEMP_DIR         = path.resolve(outputDir, './' +media, "./template", './'+site)
-  const PAGE_DIR         = path.resolve(outputDir, './' +media, "./page", './'+site)
-  
-  const DOMAIN           = domain[media]
-  
-  const DOMAIN_STATIC    = media === 'dev' ? DOMAIN + '/dev/static/' + site : DOMAIN.static + '/' + site
-  const DOMAIN_JS_CSS    = media === 'dev' ? DOMAIN_STATIC : DOMAIN.static + '/' + site
-  const DOMAIN_IMG       = media === 'dev' ? DOMAIN_STATIC : DOMAIN.img + '/' + site
-  const DOMAIN_TEMP      = media === 'dev' ? DOMAIN + '/dev/tpl/' + site : DOMAIN.tpl + '/' + site
-  const DOMAIN_PAGE      = media === 'dev' ? DOMAIN + '/dev/page/' + site : DOMAIN.page + '/' + site
-  
-  
-  const USE_HASH         = option.useHash ? !0 : (media === 'dev' ? !1 : !0)
-  // const USE_HASH = !1
-  
-  const WLIST_PAGE_DIR   = path.resolve(projectDir,'./page/_wlist')
-  const WLIST_HTML_PATH  = 'page/_wlist/_wlist.html'
-  const wListTemp        = `
+        const tempPath = fis.project.getTempPath()
+        const commonConfigPath = option.commonConfigPath || path.resolve(tempPath, '_config.js')
+            // try{
+            //   commonConfig         = require(commonConfigPath)
+            // }catch(e){
+            //   commonConfig         = {}
+            //   fis.log.info(e,'\n  please set common config!')
+            // }
+            // var pcat            = fis.get('pcat');
+        const useWigetList = fis.project.currentMedia() === 'list'
+        const media = useWigetList ? 'dev' : (fis.project.currentMedia() || 'dev')
+
+        // 设置输出路径 
+
+        // const outputDir     =  media === 'dev' ? path.resolve(tempPath, "www") : '/data/web/pcat/'
+
+        const outputDir = path.resolve(tempPath, "www")
+
+        const MAP_DIR = path.resolve(outputDir, './' + media, "./map", './' + site)
+        const PACKAGE_DIR = path.resolve(outputDir, './' + media, "./package", './' + site)
+        const STATIC_DIR = path.resolve(outputDir, './' + media, "./static", './' + site)
+        const TEMP_DIR = path.resolve(outputDir, './' + media, "./template", './' + site)
+        const PAGE_DIR = path.resolve(outputDir, './' + media, "./page", './' + site)
+
+        const DOMAIN = domain[media]
+
+        const DOMAIN_STATIC = media === 'dev' ? DOMAIN + '/dev/static/' + site : DOMAIN.static + '/' + site
+        const DOMAIN_JS_CSS = media === 'dev' ? DOMAIN_STATIC : DOMAIN.static + '/' + site
+        const DOMAIN_IMG = media === 'dev' ? DOMAIN_STATIC : DOMAIN.img + '/' + site
+        const DOMAIN_TEMP = media === 'dev' ? DOMAIN + '/dev/tpl/' + site : DOMAIN.tpl + '/' + site
+        const DOMAIN_PAGE = media === 'dev' ? DOMAIN + '/dev/page/' + site : DOMAIN.page + '/' + site
+
+
+        const USE_HASH = option.useHash ? !0 : (media === 'dev' ? !1 : !0)
+            // const USE_HASH = !1
+
+        const WLIST_PAGE_DIR = path.resolve(projectDir, './page/_wlist')
+        const WLIST_HTML_PATH = 'page/_wlist/_wlist.html'
+        const wListTemp = `
     <!--<%@page pageEncoding="GBK" %><%@include file="/templateInclude.jsp" %>
     <%--cms_config--
     {preview : {userName:'moyingchao',previewType:'channel',channelName:'软件专题', charsetName:'utf-8',fromCache:'n'}
@@ -206,9 +208,23 @@ fis.pcat = function(option) {
     })
     .hook('commonjs')
     .media(useWigetList ? fis.project.currentMedia() : media)
-    .match(/^\/page\/(.*?)\/((?:\1|index))\.js$/i, {
+    .match('/test/**', {
+      release: '$0',
+      deploy: fis.plugin('local-deliver', {
+            to: ""
+        })
+    })
+
+    .match('/test/server.conf', {
+      release: '/config/server.conf',
+      deploy: fis.plugin('local-deliver', {
+            to: ""
+        })
+    })
+
+     .match(/^\/page\/(.*?\/.*?\.(js)$)/i,{
+     release: "${pc-project}/p/$1",
         useHash: USE_HASH,
-        release: "${pc-project}/${pc-version}/j/$2.js",
         deploy: fis.plugin('local-deliver', {
             to: STATIC_DIR
         }),
@@ -220,9 +236,9 @@ fis.pcat = function(option) {
           comboOrder:3
         }
     })
-    .match(/^\/page\/(.*\/)*([^\/]+\.(?:css|less|scss)$)/i, {
+  .match(/^\/page\/(.*?\/.*?\.(css|less|scss|sass)$)/i,{
+     release: "${pc-project}/p/$1",
         useHash: USE_HASH,
-        release: "${pc-project}/${pc-version}/c/$2",
         deploy: fis.plugin('local-deliver', {
             to: STATIC_DIR
         }),
@@ -231,7 +247,8 @@ fis.pcat = function(option) {
           comboOrder:3
         }
     })
-    .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
+   .match(/^\/page\/(.*?\/.*?\.(html)$)/i,{
+     release: "${pc-project}/$1",
       useHash: USE_HASH,
       useSameNameRequire: true,
       isPage: true,
@@ -239,44 +256,30 @@ fis.pcat = function(option) {
           isPage: true
       },
       useMap: true,
-      release: "${pc-project}/${pc-version}/$2",
       deploy: fis.plugin('local-deliver', {
           to: PAGE_DIR
       }),
       domain:DOMAIN_PAGE,
       orgInfo:orgInfo
     })
-    .match(/^\/page\/(.*\/)*([^\/]+\.(?:png|jpg|gif)$)/i, {
+   
+    .match(/^\/page\/(.*?\/.*?\.(jpg|png|gif)$)/i,{
+     release: "${pc-project}/p/$1",
         useHash: USE_HASH,
         useMap:!0,
-        release: "${pc-project}/${pc-version}/i/$2",
         deploy: fis.plugin('local-deliver', {
             to: STATIC_DIR
         }),
         domain:DOMAIN_IMG
     })
-    .match(/^\/widget\/(.*\/)*([^\/]+)\.js$/i, {
+   
+    .match(/^\/widget\/(.*?\/.*?\.(js)$)/i,{
+     release: "${pc-project}/w/$1",
       useHash: USE_HASH,
-      release: "${pc-project}/${pc-version}/j/$2.js",
       deploy: fis.plugin('local-deliver', {
           to: STATIC_DIR
       }),
-      id:'widget/$2',
-      moduleId:packageJson.name + ":widget/$2",
-      requireId:packageJson.name + ":widget/$2",
-      isMod:!0,
-      extras: {
-        comboTo:'6',
-        comboOrder:2
-      }
-    })
-    .match(/^\/widget\/(.*?)\/((?:\1|index))\.js$/i, {
-      useHash: USE_HASH,
-      release: "${pc-project}/${pc-version}/j/$2.js",
-      deploy: fis.plugin('local-deliver', {
-          to: STATIC_DIR
-      }),
-      id:'widget/$2',
+      // id:'widget/$2',
       parser:function(content,file){
         return `;(function (window,document,undefined){\n${content}\n})(window,document);`
       },
@@ -286,9 +289,9 @@ fis.pcat = function(option) {
         comboOrder:2
       }
     })
-    .match(/^\/widget\/(.*\/)*([^\/]+\.(?:css|less|scss)$)/i, {
+      .match(/^\/widget\/(.*?\/.*?\.(css|less|scss|sass)$)/i,{
+      release: "${pc-project}/w/$1",
       useHash: USE_HASH,
-      release: "${pc-project}/${pc-version}/c/$2",
       deploy: fis.plugin('local-deliver', {
           to: STATIC_DIR
       }),
@@ -297,78 +300,39 @@ fis.pcat = function(option) {
         comboOrder:1
       }
     })
-    .match(/^\/widget\/(.*\/)*([^\/]+\.(?:png|jpg|gif)$)/i, {
+     .match(/^\/widget\/(.*?\/.*?\.(jpg|png|gif)$)/i,{
+      release: "${pc-project}/w/$1",
         useHash: USE_HASH,
-        release: "${pc-project}/${pc-version}/i/$2",
         deploy: fis.plugin('local-deliver', {
             to: STATIC_DIR
         }),
         domain:DOMAIN_IMG
     })
-    .match(/^\/widget\/(.*\/)*([^\/]+\.(?:html|cms|tpl)$)/i, {
+    .match(/^\/widget\/(.*?\/.*?\.(html|tpl)$)/i,{
+      release: "${pc-project}/$1",
       useHash: USE_HASH,
       isHtmlLike: true,
       isWidget: true,
       useSameNameRequire: true,
       useMap: true,
-      release: "${pc-project}/${pc-version}/$2",
       deploy: fis.plugin('local-deliver', {
           to: TEMP_DIR
       }),
       domain: ''
     })
-    .match(/^\/modules\/(.*?)\/(.*?\.)js$/i,{
+    .match(/^\/modules\/(.*?\/.*?\.(js|css|jpg|png|gif)$)/i,{
       useHash: USE_HASH,
-      release: "${pc-project}/${pc-version}/j/$1_$2js",
+      release: "${pc-project}/m/$1",
       deploy: fis.plugin('local-deliver', {
           to: STATIC_DIR
       }),
+      id:"$1",
       isMod:!0,
       extras: {
         comboTo:'5'
       }
     })
-    .match(/^\/modules\/(.*?)\/(?:\1|index)(\.js)$/i,{
-      useHash: USE_HASH,
-      release: "${pc-project}/${pc-version}/j/$1.js",
-      id: "$1",
-      moduleId:packageJson.name + ":$1",
-      requireId:packageJson.name + ":$1",
-      deploy: fis.plugin('local-deliver', {
-          to: STATIC_DIR
-      }),
-      alies:"$1",
-      isMod:!0,
-      extras: {
-        comboTo:'5'
-      }
-    })
-    .match(/^\/modules\/(.*?)\/(.*?)\.css/i,{
-      useHash: USE_HASH,
-      release: "${pc-project}/${pc-version}/c/$1_$2.css",
-      deploy: fis.plugin('local-deliver', {
-          to: STATIC_DIR
-      }),
-      isMod:!0,
-      extras: {
-        comboTo:'5'
-      }
-    })
-    .match(/^\/modules\/(.*?)\/\1\.css/i,{
-      useHash: USE_HASH,
-      release: "${pc-project}/${pc-version}/c/$1.css",
-      id: "$1",
-      moduleId:packageJson.name + ":$1",
-      requireId:packageJson.name + ":$1",
-      deploy: fis.plugin('local-deliver', {
-          to: STATIC_DIR
-      }),
-      alies:"$1",
-      isMod:!0,
-      extras: {
-        comboTo:'5'
-      }
-    })
+   
     .match('/modules/pc-config/*.js',{
       isMod:!1,
       extras: {
@@ -377,11 +341,12 @@ fis.pcat = function(option) {
     })
     .match('/modules/pc-require/*.js',{
       isMod:!1,
+      id:"pc-require",
       extras: {
         comboTo:'-111'
       }
     })
-    .match('/modules/pc-jquery/*.js',{
+    .match('/modules/jquery/*.js',{
       extras: {
         comboTo:'-112'
       }
@@ -440,7 +405,7 @@ fis.pcat = function(option) {
     })
     .match("/map.json", {
       useHash: false,
-      release: "${pc-project}/${pc-version}/$0",
+      release: "${pc-project}/$0",
       deploy: fis.plugin('local-deliver', {
           to: MAP_DIR
       })
