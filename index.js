@@ -26,9 +26,7 @@ fis.set("modules.commands", ["release", "server", "create", "cnpm"])
 
 var path = require('path')
 var args = process.argv
-var isMaster = !~args.indexOf('--child-flag')
 var _argIndex = args.length - 1
-if (!isMaster) _argIndex--;
 var releaseConfig = {}
 args[_argIndex].split('+').forEach(function(value) {
     if (/(.*?)\:(.*)/.test(value)) {
@@ -36,19 +34,29 @@ args[_argIndex].split('+').forEach(function(value) {
     }
 })
 var userName = releaseConfig.author || ''
-    // console.log(releaseConfig,userName,args)
-    // var userName = /user\:(.*)(?:\|+?|^\|$)/.test(args[args.length - 1]) ? RegExp.$1 : ''
-    // console.log(userName)
-    // fis.pcSub = function(){
-    //   isMaster && console.log('-------------------------- ',fis.get('output'),' --------------------------')
 
-//   isMaster && shell('start ' + 'chrome' + ' "'+ 'http://127.0.0.1:8090/' + fis.get('namespace') + '/index.html?t=' +(+new Date) +'"')
-// }
+// 忽略文件、文件夹
 fis.set('project.ignore', ['output/**', 'fis-conf.js', 'node_modules/**']); // set 为覆盖不是叠加
 
 // 自动定位requrie的id
 fis.config.set("component.dir", "modules");
 
+
+/**
+ * @dec [
+ *  配置函数
+ *  自定义配置封装成一个函数
+ *  这样可以在fis-conf.js文件里面进行进行配置覆盖
+ *  同时可以传参
+ * ]
+ * @param  {Object} option 项目差异配置
+ * {
+ *   domain: {
+ *     dev : '' //开发时服务器的域名 http://my.pconline.com.cn || ''
+ *   },
+ *   packageJson: {} //子系统的 package json 对象
+ * }
+ */
 fis.pcat = function(option) {
         var fis = this
         var commonConfig = { api: 'dev6.pconline.com.cn:8002' }
@@ -65,7 +73,6 @@ fis.pcat = function(option) {
         const packageJson = option.packageJson
         const site = packageJson.site || path.resolve(projectDir, "../").split(path.sep).pop()
 
-        // const projectType = option.type || 'cms'
         const domain = {
             dev: option.domain.dev,
             qa: {
@@ -89,19 +96,11 @@ fis.pcat = function(option) {
         }
 
         const tempPath = fis.project.getTempPath()
-        const commonConfigPath = option.commonConfigPath || path.resolve(tempPath, '_config.js')
-            // try{
-            //   commonConfig         = require(commonConfigPath)
-            // }catch(e){
-            //   commonConfig         = {}
-            //   fis.log.info(e,'\n  please set common config!')
-            // }
-            // var pcat            = fis.get('pcat');
+    
         const useWigetList = fis.project.currentMedia() === 'list'
         const media = useWigetList ? 'dev' : (fis.project.currentMedia() || 'dev')
 
         // 设置输出路径 
-
         // const outputDir     =  media === 'dev' ? path.resolve(tempPath, "www") : '/data/web/pcat/'
 
         const outputDir = path.resolve(tempPath, "www")
@@ -124,6 +123,7 @@ fis.pcat = function(option) {
         const USE_HASH = option.useHash ? !0 : (media === 'dev' ? !1 : !0)
             // const USE_HASH = !1
 
+    // 组件预览相关
         const WLIST_PAGE_DIR = path.resolve(projectDir, './page/_wlist')
         const WLIST_HTML_PATH = 'page/_wlist/_wlist.html'
         const wListTemp = `
@@ -171,15 +171,6 @@ fis.pcat = function(option) {
       if(value)return value
     })
     return content.replace(/{{ALL_WIDGET}}/g,`{${dirs.join(',')}}`)
-    // 
-    // 
-    // dirs = dirs.map(function(name,i){
-    //   if(!fis.util.isDir(path.resolve(wDir,'./'+name)))return '';
-    //   return `<li><h2>${name}</h2><div style="overflow:hidden;position:relative;"><widget name="${name}"></widget></div></li>`
-    // }).filter(function(value){
-    //   if(value)return value
-    // })
-    // return content.replace(/{{ALL_WIDGET}}/g,dirs.join('\n'))
   }
   useWigetList && !fis.util.exists(WLIST_PAGE_DIR) && (()=>{
     fs.mkdirSync(WLIST_PAGE_DIR)
