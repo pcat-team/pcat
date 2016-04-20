@@ -165,7 +165,7 @@ fis.pcat = function(option) {
     dirs = dirs.map(function(name,i){
       if(!fis.util.isDir(path.resolve(wDir,'./'+name)))return '';
       return `"${name}":{
-        content: \`<widget name="${name}"></widget>\`
+        content: \`<widget name="${name}" version="1.0.0"></widget>\`
       }`
     }).filter(function(value){
       if(value)return value
@@ -311,13 +311,13 @@ fis.pcat = function(option) {
       }),
       domain: ''
     })
-    .match(/^\/modules\/(.*?\/.*?\.(js|css|jpg|png|gif)$)/i,{
+    .match(/^\/modules\/((.*?)\/.*?\.(js|css|jpg|png|gif)$)/i,{
       useHash: USE_HASH,
       release: "${pc-project}/m/$1",
       deploy: fis.plugin('local-deliver', {
           to: STATIC_DIR
       }),
-      id:"$1",
+      id:"$2",
       isMod:!0,
       extras: {
         comboTo:'5'
@@ -332,7 +332,6 @@ fis.pcat = function(option) {
     })
     .match('/modules/pc-require/*.js',{
       isMod:!1,
-      id:"pc-require",
       extras: {
         comboTo:'-111'
       }
