@@ -6,7 +6,7 @@ var Liftoff = require('liftoff');
 var argv = require('minimist')(process.argv.slice(2));
 var path = require('path');
 var cli = new Liftoff({
-  name: 'pcat', // 命令名字
+  name: 'pcat',
   processTitle: 'pcat',
   moduleName: 'pcat',
   configName: 'fis-conf',
