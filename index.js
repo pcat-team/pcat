@@ -59,7 +59,7 @@ fis.config.set("component.dir", "modules");
  */
 fis.pcat = function(option) {
         var fis = this
-        var commonConfig = { api: 'dev6.pconline.com.cn:8002' }
+         var commonConfig = option.api.cmsUpLoad;
 
 
 
