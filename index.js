@@ -38,6 +38,8 @@ var userName = releaseConfig.author || ''
 // 忽略文件、文件夹
 fis.set('project.ignore', ['output/**', 'fis-conf.js', 'node_modules/**']); // set 为覆盖不是叠加
 
+fis.set('project.fileType.text', 'jsx');
+
 // 自动定位requrie的id
 fis.config.set("component.dir", "modules");
 
@@ -162,15 +164,61 @@ fis.pcat = function(option) {
     let dirs = fs.readdirSync(wDir)
     if(!dirs)return content;
 
+     var listW = {};
+
+    dirs.forEach(function(name){
+
+      var widgetPath = path.resolve(wDir,name);
+
+
+        if(fis.util.isDir(widgetPath)){
+          if(!listW[name]) listW[name] = {};
+
+            fs.readdirSync(widgetPath).forEach(function(version){
+
+              var versionPath = path.resolve(widgetPath,version);
+
+              if(fis.util.isDir(versionPath)){
+
+                // 每个版本的package.json
+                var versionPackPath = path.resolve(versionPath,"package.json");
+
+                if(!fis.util.exists(versionPackPath)){
+                   fis.log.error('组件[%s]版本[%s]缺少package.json文件，请添加后再编译！', name, version);
+                }
+
+                var config = require(versionPackPath);
+
+                var obj  = {
+                  author:config.author,
+                  des:config.des,
+                  // content:'<widget name="'+name+'" version="'+version+'"></widget>'
+                  content:"<widget name='"+name+"' version='"+version+"'  _fileType='js'></widget>"
+                }
+
+                listW[name][version] = obj;
+
+                 
+                // listW[name][version].content= '<widget name="'+name+'" version="'+version+'"></widget>';
+
+              }
+            })
+
+        }
+    })
+
+    console.log(JSON.stringify(listW))
+
     dirs = dirs.map(function(name,i){
       if(!fis.util.isDir(path.resolve(wDir,'./'+name)))return '';
       return `"${name}":{
-        content: \`<widget name="${name}" version="1.0.0"></widget>\`
+        content: '<widget name="${name}" _fileType="js" version="1.0.0"></widget>'
       }`
     }).filter(function(value){
       if(value)return value
     })
-    return content.replace(/{{ALL_WIDGET}}/g,`{${dirs.join(',')}}`)
+    // return content.replace(/{{ALL_WIDGET}}/g,`{${dirs.join(',')}}`)
+    return content.replace(/{{ALL_WIDGET}}/g,JSON.stringify(listW))
   }
   useWigetList && !fis.util.exists(WLIST_PAGE_DIR) && (()=>{
     fs.mkdirSync(WLIST_PAGE_DIR)
@@ -194,7 +242,7 @@ fis.pcat = function(option) {
 
   fis
     .match('(*)', {
-      release: false,
+      // release: false,
       domain:DOMAIN_JS_CSS
     })
     .hook('commonjs')
@@ -213,7 +261,7 @@ fis.pcat = function(option) {
         })
     })
 
-     .match(/^\/page\/(.*?\/.*?\.(js)$)/i,{
+     .match(/^\/page\/(.*?\/.*?\.(js|jsx)$)/i,{
      release: "${pc-project}/p/$1",
         useHash: USE_HASH,
         deploy: fis.plugin('local-deliver', {
@@ -264,7 +312,7 @@ fis.pcat = function(option) {
         domain:DOMAIN_IMG
     })
    
-    .match(/^\/widget\/(.*?\/.*?\.(js)$)/i,{
+    .match(/^\/widget\/(.*?\/.*?\.(js|jsx)$)/i,{
      release: "${pc-project}/w/$1",
       useHash: USE_HASH,
       deploy: fis.plugin('local-deliver', {
@@ -311,7 +359,8 @@ fis.pcat = function(option) {
       }),
       domain: ''
     })
-    .match(/^\/modules\/((.*?)\/.*?\.(js|css|jpg|png|gif)$)/i,{
+
+    .match(/^\/modules\/((.*?)\/.*?\.(js|jsx|css|less|scss|sass)$)/i,{
       useHash: USE_HASH,
       release: "${pc-project}/m/$1",
       deploy: fis.plugin('local-deliver', {
@@ -322,6 +371,15 @@ fis.pcat = function(option) {
       extras: {
         comboTo:'5'
       }
+    })
+
+     .match(/^\/modules\/((.*?)\/.*?\.(png|jpg|gif|jpeg)$)/i,{
+      release: "${pc-project}/m/$1",
+       useHash: USE_HASH,
+        deploy: fis.plugin('local-deliver', {
+            to: STATIC_DIR
+        }),
+        domain:DOMAIN_IMG
     })
    
     .match('/modules/pc-config/*.js',{
@@ -362,6 +420,14 @@ fis.pcat = function(option) {
       useSprite: true,
       parser: fis.plugin('less'),
       rExt: '.css'
+    })
+    .match('**.jsx', {
+        parser: fis.plugin('babel-5.x', {
+            blacklist: ['regenerator'],
+            sourceMaps: true,
+            stage: 3
+        }),
+        rExt: 'js'
     })
     .match("::package", {
       prepackager: function(ret, conf, settings, opt) {
