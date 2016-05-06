@@ -61,9 +61,7 @@ fis.config.set("component.dir", "modules");
  */
 fis.pcat = function(option) {
         var fis = this
-         var commonConfig = option.api.cmsUpLoad;
-
-
+        var commonConfig = option.api.cmsUpLoad;
 
         const _now = new Date
 
@@ -98,7 +96,7 @@ fis.pcat = function(option) {
         }
 
         const tempPath = fis.project.getTempPath()
-    
+
         const useWigetList = fis.project.currentMedia() === 'list'
         const media = useWigetList ? 'dev' : (fis.project.currentMedia() || 'dev')
 
@@ -125,328 +123,237 @@ fis.pcat = function(option) {
         const USE_HASH = option.useHash ? !0 : (media === 'dev' ? !1 : !0)
             // const USE_HASH = !1
 
-    // 组件预览相关
-        const WLIST_PAGE_DIR = path.resolve(projectDir, './page/_wlist')
-        const WLIST_HTML_PATH = 'page/_wlist/_wlist.html'
-        const wListTemp = `
-    <!--<%@page pageEncoding="GBK" %><%@include file="/templateInclude.jsp" %>
-    <%--cms_config--
-    {preview : {userName:'moyingchao',previewType:'channel',channelName:'软件专题', charsetName:'utf-8',fromCache:'n'}
-    }
-    --/cms_config--%>--><!-- @require common:pc-require --><!-- @require common:pc-config -->
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-    <meta charset="UTF-8">
-    <title>组件预览</title>
-    <link rel="stylesheet" href="http://zzsvn.pconline.com.cn/svn/zt/pc/gz/cenjinchao/wlist/_wlist.css">
-    <!--COMBO_CSS-->
-    </head>
-    <body>
-    <div id="JLeft"></div>
-    <div id="JRight"></div>
-    <textarea type="text/html" id="JWtemp" style="display:none">
-    {{ALL_WIDGET}}
-    </textarea>
-    <script> 
-    var wJson = new Function('var _a = '+ document.querySelector('#JWtemp').innerHTML.replace(/\\\${/g,'\\\\\${').replace(/\\&lt\\;/g,'<').replace(/\\&gt\\;/g,'>')+';return _a;')()
+        // 组件预览相关
+        const WLIST_HTML_PATH = 'page/_wlist/**'
 
-    </script>
-    <script src="http://zzsvn.pconline.com.cn/svn/zt/pc/gz/cenjinchao/npm-r/react/index.js"></script>
-    <script src="http://zzsvn.pconline.com.cn/svn/zt/pc/gz/cenjinchao/npm-r/react-dom/index.js"></script>
-    <script src="http://zzsvn.pconline.com.cn/svn/zt/pc/gz/cenjinchao/wlist/_wlist.js"></script>
-    <!--COMBO_JS-->
-    </body>
-    </html>`
-  const _loadAllWidgets  = function(content,file,settings){
-    //get list
-    let wDir = path.resolve(projectDir,'./widget')
-    let dirs = fs.readdirSync(wDir)
-    if(!dirs)return content;
+        fis.set("PCAT", {
+            useCombo: option.combo,
+            project: packageJson.name,
+            version: packageJson.version,
+            media: media,
+            site: site,
+            tagName: "widget" //约束为与组件目录同名
+        });
+        fis.set('namespace', packageJson.name);
+        fis.set('pc-project', packageJson.name);
+        fis.set('pc-version', packageJson.version);
 
-     var listW = {};
+        media !== 'dev' && console.log(`preview(${DOMAIN_PAGE}/${packageJson.name}/${packageJson.version}/)`)
 
-    dirs.forEach(function(name){
-
-      var widgetPath = path.resolve(wDir,name);
-
-
-        if(fis.util.isDir(widgetPath)){
-          if(!listW[name]) listW[name] = {};
-
-            fs.readdirSync(widgetPath).forEach(function(version){
-
-              var versionPath = path.resolve(widgetPath,version);
-
-              if(fis.util.isDir(versionPath)){
-
-                // 每个版本的package.json
-                var versionPackPath = path.resolve(versionPath,"package.json");
-
-                if(!fis.util.exists(versionPackPath)){
-                   fis.log.error('组件[%s]版本[%s]缺少package.json文件，请添加后再编译！', name, version);
-                }
-
-                var config = require(versionPackPath);
-
-                var obj  = {
-                  author:config.author,
-                  des:config.des,
-                  // content:'<widget name="'+name+'" version="'+version+'"></widget>'
-                  content:"<widget name='"+name+"' version='"+version+"'  _fileType='js'></widget>"
-                }
-
-                listW[name][version] = obj;
-
-                 
-                // listW[name][version].content= '<widget name="'+name+'" version="'+version+'"></widget>';
-
-              }
+        fis
+            .match('(*)', {
+                // release: false,
+                domain: DOMAIN_JS_CSS
+            })
+            .hook('commonjs')
+            .media(useWigetList ? fis.project.currentMedia() : media)
+            .match('/test/**', {
+                release: '$0',
+                deploy: fis.plugin('local-deliver', {
+                    to: ""
+                })
             })
 
-        }
-    })
-
-    console.log(JSON.stringify(listW))
-
-    dirs = dirs.map(function(name,i){
-      if(!fis.util.isDir(path.resolve(wDir,'./'+name)))return '';
-      return `"${name}":{
-        content: '<widget name="${name}" _fileType="js" version="1.0.0"></widget>'
-      }`
-    }).filter(function(value){
-      if(value)return value
-    })
-    // return content.replace(/{{ALL_WIDGET}}/g,`{${dirs.join(',')}}`)
-    return content.replace(/{{ALL_WIDGET}}/g,JSON.stringify(listW))
-  }
-  useWigetList && !fis.util.exists(WLIST_PAGE_DIR) && (()=>{
-    fs.mkdirSync(WLIST_PAGE_DIR)
-    fis.util.write(path.resolve(WLIST_PAGE_DIR,'./_wlist.html'),wListTemp)
-  })()
-  // fis.util.exists(WLIST_PAGE_DIR) && fis.util.write(path.resolve(WLIST_PAGE_DIR,'./_wlist.html'),wListTemp)
-  // fis.log.info(outputDir,TEMP_DIR)
-  fis.set("PCAT", {
-      useCombo: option.combo,
-      project: packageJson.name,
-      version: packageJson.version,
-      media: media,
-      site: site,
-      tagName: "widget" //约束为与组件目录同名
-  });
-  fis.set('namespace', packageJson.name);
-  fis.set('pc-project', packageJson.name);
-  fis.set('pc-version', packageJson.version);
-
-  media!== 'dev' && console.log(`preview(${DOMAIN_PAGE}/${packageJson.name}/${packageJson.version}/)`)
-
-  fis
-    .match('(*)', {
-      // release: false,
-      domain:DOMAIN_JS_CSS
-    })
-    .hook('commonjs')
-    .media(useWigetList ? fis.project.currentMedia() : media)
-    .match('/test/**', {
-      release: '$0',
-      deploy: fis.plugin('local-deliver', {
-            to: ""
+        .match('/test/server.conf', {
+            release: '/config/server.conf',
+            deploy: fis.plugin('local-deliver', {
+                to: ""
+            })
         })
-    })
 
-    .match('/test/server.conf', {
-      release: '/config/server.conf',
-      deploy: fis.plugin('local-deliver', {
-            to: ""
+        .match(/^\/page\/(.*?\/.*?\.(js|jsx)$)/i, {
+                release: "${pc-project}/p/$1",
+                useHash: USE_HASH,
+                deploy: fis.plugin('local-deliver', {
+                    to: STATIC_DIR
+                }),
+                parser: function(content, file) {
+                    return `;(function (window,document,undefined){\n${content}\n})(window,document);`
+                },
+                extras: {
+                    comboTo: '6',
+                    comboOrder: 3
+                }
+            })
+            .match(/^\/page\/(.*?\/.*?\.(css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
+                release: "${pc-project}/p/$1",
+                useHash: USE_HASH,
+                deploy: fis.plugin('local-deliver', {
+                    to: STATIC_DIR
+                }),
+                extras: {
+                    comboTo: '6',
+                    comboOrder: 3
+                }
+            })
+            .match(/^\/page\/(.*?\/.*?\.(html)$)/i, {
+                release: "${pc-project}/$1",
+                useHash: USE_HASH,
+                useSameNameRequire: true,
+                isPage: true,
+                extras: {
+                    isPage: true
+                },
+                useMap: true,
+                deploy: fis.plugin('local-deliver', {
+                    to: PAGE_DIR
+                }),
+                domain: DOMAIN_PAGE,
+                orgInfo: orgInfo
+            })
+
+        .match(/^\/page\/(.*?\/.*?\.(jpg|png|gif)$)/i, {
+            release: "${pc-project}/p/$1",
+            useHash: USE_HASH,
+            useMap: !0,
+            deploy: fis.plugin('local-deliver', {
+                to: STATIC_DIR
+            }),
+            domain: DOMAIN_IMG
         })
-    })
 
-     .match(/^\/page\/(.*?\/.*?\.(js|jsx)$)/i,{
-     release: "${pc-project}/p/$1",
-        useHash: USE_HASH,
-        deploy: fis.plugin('local-deliver', {
-            to: STATIC_DIR
-        }),
-        parser:function(content,file){
-          return `;(function (window,document,undefined){\n${content}\n})(window,document);`
-        },
-        extras: {
-          comboTo:'6',
-          comboOrder:3
-        }
-    })
-  .match(/^\/page\/(.*?\/.*?\.(css|less|scss|sass)$)/i,{
-     release: "${pc-project}/p/$1",
-        useHash: USE_HASH,
-        deploy: fis.plugin('local-deliver', {
-            to: STATIC_DIR
-        }),
-        extras: {
-          comboTo:'6',
-          comboOrder:3
-        }
-    })
-   .match(/^\/page\/(.*?\/.*?\.(html)$)/i,{
-     release: "${pc-project}/$1",
-      useHash: USE_HASH,
-      useSameNameRequire: true,
-      isPage: true,
-      extras: {
-          isPage: true
-      },
-      useMap: true,
-      deploy: fis.plugin('local-deliver', {
-          to: PAGE_DIR
-      }),
-      domain:DOMAIN_PAGE,
-      orgInfo:orgInfo
-    })
-   
-    .match(/^\/page\/(.*?\/.*?\.(jpg|png|gif)$)/i,{
-     release: "${pc-project}/p/$1",
-        useHash: USE_HASH,
-        useMap:!0,
-        deploy: fis.plugin('local-deliver', {
-            to: STATIC_DIR
-        }),
-        domain:DOMAIN_IMG
-    })
-   
-    .match(/^\/widget\/(.*?\/.*?\.(js|jsx)$)/i,{
-     release: "${pc-project}/w/$1",
-      useHash: USE_HASH,
-      deploy: fis.plugin('local-deliver', {
-          to: STATIC_DIR
-      }),
-      // id:'widget/$2',
-      parser:function(content,file){
-        return `;(function (window,document,undefined){\n${content}\n})(window,document);`
-      },
-      isMod:!1,
-      extras: {
-        comboTo:'6',
-        comboOrder:2
-      }
-    })
-      .match(/^\/widget\/(.*?\/.*?\.(css|less|scss|sass)$)/i,{
-      release: "${pc-project}/w/$1",
-      useHash: USE_HASH,
-      deploy: fis.plugin('local-deliver', {
-          to: STATIC_DIR
-      }),
-      extras: {
-        comboTo:'6',
-        comboOrder:1
-      }
-    })
-     .match(/^\/widget\/(.*?\/.*?\.(jpg|png|gif)$)/i,{
-      release: "${pc-project}/w/$1",
-        useHash: USE_HASH,
-        deploy: fis.plugin('local-deliver', {
-            to: STATIC_DIR
-        }),
-        domain:DOMAIN_IMG
-    })
-    .match(/^\/widget\/(.*?\/.*?\.(html|tpl)$)/i,{
-      release: "${pc-project}/$1",
-      useHash: USE_HASH,
-      isHtmlLike: true,
-      isWidget: true,
-      useSameNameRequire: true,
-      useMap: true,
-      deploy: fis.plugin('local-deliver', {
-          to: TEMP_DIR
-      }),
-      domain: ''
-    })
+        .match(/^\/widget\/(.*?\/.*?\.(js|jsx)$)/i, {
+                release: "${pc-project}/w/$1",
+                useHash: USE_HASH,
+                deploy: fis.plugin('local-deliver', {
+                    to: STATIC_DIR
+                }),
+                // id:'widget/$2',
+                parser: function(content, file) {
+                    return `;(function (window,document,undefined){\n${content}\n})(window,document);`
+                },
+                isMod: !1,
+                extras: {
+                    comboTo: '6',
+                    comboOrder: 2
+                }
+            })
+            .match(/^\/widget\/(.*?\/.*?\.(css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
+                release: "${pc-project}/w/$1",
+                useHash: USE_HASH,
+                deploy: fis.plugin('local-deliver', {
+                    to: STATIC_DIR
+                }),
+                extras: {
+                    comboTo: '6',
+                    comboOrder: 1
+                }
+            })
+            .match(/^\/widget\/(.*?\/.*?\.(jpg|png|gif)$)/i, {
+                release: "${pc-project}/w/$1",
+                useHash: USE_HASH,
+                deploy: fis.plugin('local-deliver', {
+                    to: STATIC_DIR
+                }),
+                domain: DOMAIN_IMG
+            })
+            .match(/^\/widget\/(.*?\/.*?\.(html|tpl)$)/i, {
+                release: "${pc-project}/$1",
+                useHash: USE_HASH,
+                isHtmlLike: true,
+                isWidget: true,
+                useSameNameRequire: true,
+                useMap: true,
+                deploy: fis.plugin('local-deliver', {
+                    to: TEMP_DIR
+                }),
+                domain: ''
+            })
 
-    .match(/^\/modules\/((.*?)\/.*?\.(js|jsx|css|less|scss|sass)$)/i,{
-      useHash: USE_HASH,
-      release: "${pc-project}/m/$1",
-      deploy: fis.plugin('local-deliver', {
-          to: STATIC_DIR
-      }),
-      id:"$2",
-      isMod:!0,
-      extras: {
-        comboTo:'5'
-      }
-    })
+        .match(/^\/modules\/((.*?)\/.*?\.(js|jsx|css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
+            useHash: USE_HASH,
+            release: "${pc-project}/m/$1",
+            deploy: fis.plugin('local-deliver', {
+                to: STATIC_DIR
+            }),
+            id: "$2",
+            isMod: !0,
+            extras: {
+                comboTo: '5'
+            }
+        })
 
-     .match(/^\/modules\/((.*?)\/.*?\.(png|jpg|gif|jpeg)$)/i,{
-      release: "${pc-project}/m/$1",
-       useHash: USE_HASH,
-        deploy: fis.plugin('local-deliver', {
-            to: STATIC_DIR
-        }),
-        domain:DOMAIN_IMG
-    })
-   
-    .match('/modules/pc-config/*.js',{
-      isMod:!1,
-      extras: {
-        comboTo:'5'
-      }
-    })
-    .match('/modules/pc-require/*.js',{
-      isMod:!1,
-      extras: {
-        comboTo:'-111'
-      }
-    })
-    .match('/modules/jquery/*.js',{
-      extras: {
-        comboTo:'-112'
-      }
-    })
-    .match("*.html", {
-      parser: fis.plugin("widget-load", {
-          project: fis.get("PCAT.project"),
-          tagName: fis.get("PCAT.tagName"),
-          mapOutputPath: MAP_DIR,
-          templateOutputPath: TEMP_DIR,
-          packageOutputPath:PACKAGE_DIR
-      })
-    })
-    .match('**.css', {
-      useSprite: true
-    })
-    .match('**.{sass,scss}', {
-      useSprite: true,
-      parser: fis.plugin('sass2'),
-      rExt: '.css'
-    })
-    .match('**.less', {
-      useSprite: true,
-      parser: fis.plugin('less'),
-      rExt: '.css'
-    })
-    .match('**.jsx', {
-        parser: fis.plugin('babel-5.x', {
-            blacklist: ['regenerator'],
-            sourceMaps: true,
-            stage: 3
-        }),
-        rExt: 'js'
-    })
-    .match("::package", {
-      prepackager: function(ret, conf, settings, opt) {
-          // ret.src 所有的源码，结构是 {'<subpath>': <File 对象>}
-          // ret.ids 所有源码列表，结构是 {'<id>': <File 对象>}
-          // ret.map 如果是 spriter、postpackager 这时候已经能得到打包结果了，
-          //         可以修改静态资源列表或者其他
-        'use strict'
-        let ids = ret.ids
-        Object.keys(ids).forEach((id) => {
-          let file = ids[id]
-          if(!file.orgInfo)return;
-          let content = file.getContent()
-          file.setContent(`<!--${file.orgInfo}-->\n${content}`)
-          //for server preview
-          let hash = file.getHash()
-          let root = `/${media}/page/${site}${media ==='dev' ? file.release : file.release.replace('\.html',`_${hash}.html`)}`
+        .match(/^\/modules\/((.*?)\/.*?\.(png|jpg|gif|jpeg)$)/i, {
+            release: "${pc-project}/m/$1",
+            useHash: USE_HASH,
+            deploy: fis.plugin('local-deliver', {
+                to: STATIC_DIR
+            }),
+            domain: DOMAIN_IMG
+        })
+
+        .match('/modules/pc-config/*.js', {
+                isMod: !1,
+                extras: {
+                    comboTo: '5'
+                }
+            })
+            .match('/modules/pc-require/*.js', {
+                isMod: !1,
+                extras: {
+                    comboTo: '-111'
+                }
+            })
+            .match('/modules/jquery/*.js', {
+                extras: {
+                    comboTo: '-112'
+                }
+            })
+            .match("*.html", {
+                parser: fis.plugin("widget-load", {
+                    project: fis.get("PCAT.project"),
+                    tagName: fis.get("PCAT.tagName"),
+                    mapOutputPath: MAP_DIR,
+                    templateOutputPath: TEMP_DIR,
+                    packageOutputPath: PACKAGE_DIR
+                })
+            })
+            .match('**.css', {
+                useSprite: true
+            })
+            .match('**.{sass,scss}', {
+                useSprite: true,
+                parser: fis.plugin('sass2'),
+                rExt: '.css'
+            })
+            .match('**.less', {
+                useSprite: true,
+                parser: fis.plugin('less'),
+                rExt: '.css'
+            })
+            .match('**.jsx', {
+                parser: fis.plugin('babel-5.x', {
+                    blacklist: ['regenerator'],
+                    sourceMaps: true,
+                    stage: 3
+                }),
+                rExt: 'js'
+            })
+            .match("::package", {
+                    prepackager: function(ret, conf, settings, opt) {
+                            // ret.src 所有的源码，结构是 {'<subpath>': <File 对象>}
+                            // ret.ids 所有源码列表，结构是 {'<id>': <File 对象>}
+                            // ret.map 如果是 spriter、postpackager 这时候已经能得到打包结果了，
+                            //         可以修改静态资源列表或者其他
+                            'use strict'
+                            let ids = ret.ids
+                            Object.keys(ids).forEach((id) => {
+                                        let file = ids[id]
+
+                                        // file.setContent(file.getContent().replace("__WIDGETLOADEDLISTS__", JSON.stringify(fis.get("widgetloadedList"))));
+
+
+
+                                        if (!file.orgInfo) return;
+                                        let content = file.getContent()
+                                        file.setContent(`<!--${file.orgInfo}-->\n${content}`)
+                                            //for server preview
+                                        let hash = file.getHash()
+                                        let root = `/${media}/page/${site}${media ==='dev' ? file.release : file.release.replace('\.html',`_${hash}.html`)}`
           file.extras ? (file.extras.hash = hash,file.extras.path = root) : file.extras = {hash:hash,path:root}
         })
+
+        
       },
       packager: fis.plugin("widget-render", {
         tagName: fis.get("PCAT.tagName"),
@@ -476,23 +383,46 @@ fis.pcat = function(option) {
     .match("*.{js,css,scss,less}",{
       optimizer: staticOrg
     })
+
+
     if(useWigetList){
-      fis
-        .match(WLIST_HTML_PATH,{
-        parser:[_loadAllWidgets,fis.plugin("widget-load", {
-            project: fis.get("PCAT.project"),
-            tagName: fis.get("PCAT.tagName"),
-            mapOutputPath: MAP_DIR,
-            templateOutputPath: TEMP_DIR,
-            packageOutputPath:PACKAGE_DIR
-        })]
+        let wlist = require("./plugin/widget.js")
+        fis.match("::package",{
+          prepackager: function(ret, conf, settings, opt) {
+            // ret.src 所有的源码，结构是 {'<subpath>': <File 对象>}
+            // ret.ids 所有源码列表，结构是 {'<id>': <File 对象>}
+            // ret.map 如果是 spriter、postpackager 这时候已经能得到打包结果了，
+            //         可以修改静态资源列表或者其他
+          'use strict'
+          let ids = ret.ids
+          Object.keys(ids).forEach((id) => {
+            let file = ids[id]
+
+            let content = file.getContent();
+
+            // 全部组件列表
+            let alllist = JSON.stringify(fis.get("__WIDGETALLLISTS__"));
+            content = content.replace("__WIDGETALLLISTS__",alllist)
+
+            // 已加载组件列表
+            let loadlist = JSON.stringify(fis.get("__WIDGETLOADEDLISTS__"));
+            content = content.replace("__WIDGETLOADEDLISTS__",loadlist)
+
+            file.setContent(content)
+
+          })
+
+          
+        }
       })
+
     }else{
-      fis.match(WLIST_HTML_PATH,{
+       fis.match(WLIST_HTML_PATH,{
         parser:[],
         release: !1
       })
     }
+
     
     if(media === 'qa' || media === 'ol' || media === 'online'){
       fis

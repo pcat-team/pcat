@@ -1,6 +1,6 @@
 {
   "name": "pcat",
-  "version": "1.2.16",
+  "version": "1.2.17",
   "description": "pcground front-end node.js tool",
   "main": "index.js",
   "scripts": {
@@ -27,22 +27,28 @@
     "liftoff": "^2.1.0",
     "minimist": "^1.1.1",
     "fis-mini": "^3.3.0",
-    "fis3-hook-commonjs":"0.1.8",
-    "fis3-hook-components":"*",
-    "fis3-postpackager-autocombo":"*",
+    "fs-extra":"0.30.0",
+    "fis3-hook-commonjs": "0.1.8",
+    "fis3-hook-components": "*",
+    "fis3-postpackager-autocombo": "*",
     "pcat-parser-widget-load": "*",
     "pcat-packager-widget-render": "*",
-    "pcat-command-server":"*",
-    "pcat-command-create":"*",
-    "pcat-command-www1":"*",
-    "pcat-server-node":"*",
-    "pcat-deploy-cms":"*",
-    "pcat-command-cnpm":"*",
-
-    "request":"2.69.0"
+    "pcat-command-server": "*",
+    "pcat-command-create": "*",
+    "pcat-command-www1": "*",
+    "pcat-server-node": "*",
+    "pcat-deploy-cms": "*",
+    "pcat-command-cnpm": "*",
+    "request": "2.69.0"
   },
   "bugs": {
     "url": "https://github.com/jincdream/pcat/issues"
   },
-  "homepage": "https://github.com/jincdream/pcat"
+  "homepage": "https://github.com/jincdream/pcat",
+  "readme": "ERROR: No README data found!",
+  "readmeFilename": "README.md",
+  "gitHead": "49ab42b18d7ad1d8f8a959f1b615566d50e2e660",
+  "_id": "pcat@1.2.16",
+  "_shasum": "85dd3f27130f3a5b8db31a9d27dc3b59e66eb24b",
+  "_from": "pcat@1.2.16"
 }
