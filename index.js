@@ -61,7 +61,7 @@ fis.config.set("component.dir", "modules");
  */
 fis.pcat = function(option) {
         var fis = this
-        var commonConfig = option.api.cmsUpLoad;
+        var commonConfig = option.api;
 
         const _now = new Date
 
@@ -450,7 +450,7 @@ fis.pcat = function(option) {
                   }),fis.plugin('cms', {
                     project: packageJson.name,
                     userName:userName,
-                    api:commonConfig.api
+                    api:commonConfig.cmsUpLoad || "cms."+site+".com.cn"
                   })]
         })
     }
