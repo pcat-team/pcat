@@ -1,6 +1,6 @@
 {
   "name": "pcat",
-  "version": "1.2.17",
+  "version": "1.2.18",
   "description": "pcground front-end node.js tool",
   "main": "index.js",
   "scripts": {
@@ -38,6 +38,7 @@
     "pcat-command-www1": "*",
     "pcat-server-node": "*",
     "pcat-deploy-cms": "*",
+    "fis-parser-babel-5.x": "1.3.0",
     "pcat-command-cnpm": "*",
     "request": "2.69.0"
   },
