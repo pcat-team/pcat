@@ -72,6 +72,8 @@ fis.pcat = function(option) {
         }
         const packageJson = option.packageJson
         const site = packageJson.site || path.resolve(projectDir, "../").split(path.sep).pop()
+        const client = packageJson.client;
+        const dir = packageJson.dir;
 
         const domain = {
             dev: option.domain.dev,
@@ -105,19 +107,22 @@ fis.pcat = function(option) {
 
         const outputDir = path.resolve(tempPath, "www")
 
-        const MAP_DIR = path.resolve(outputDir, './' + media, "./map", './' + site)
-        const PACKAGE_DIR = path.resolve(outputDir, './' + media, "./package", './' + site)
-        const STATIC_DIR = path.resolve(outputDir, './' + media, "./static", './' + site)
-        const TEMP_DIR = path.resolve(outputDir, './' + media, "./template", './' + site)
-        const PAGE_DIR = path.resolve(outputDir, './' + media, "./page", './' + site)
+        const MAP_DIR = path.resolve(outputDir, './' + media, "./map", './' + site,client)
+        const PACKAGE_DIR = path.resolve(outputDir, './' + media, "./package", './' + site,client)
+        const STATIC_DIR = path.resolve(outputDir, './' + media, "./static", './' + site,client)
+        const TEMP_DIR = path.resolve(outputDir, './' + media, "./template", './' + site,client)
+        const PAGE_DIR = path.resolve(outputDir, './' + media, "./page", './' + site,client)
 
         const DOMAIN = domain[media]
 
-        const DOMAIN_STATIC = media === 'dev' ? DOMAIN + '/dev/static/' + site : DOMAIN.static + '/' + site
-        const DOMAIN_JS_CSS = media === 'dev' ? DOMAIN_STATIC : DOMAIN.static + '/' + site
-        const DOMAIN_IMG = media === 'dev' ? DOMAIN_STATIC : DOMAIN.img + '/' + site
-        const DOMAIN_TEMP = media === 'dev' ? DOMAIN + '/dev/tpl/' + site : DOMAIN.tpl + '/' + site
-        const DOMAIN_PAGE = media === 'dev' ? DOMAIN + '/dev/page/' + site : DOMAIN.page + '/' + site
+        const DOMAIN_STATIC = media === 'dev' ? DOMAIN + '/dev/static/' + site+"/"+client : DOMAIN.static + '/' + site+"/"+client
+
+        const DOMAIN_JS_CSS = media === DOMAIN_STATIC
+
+        const DOMAIN_IMG = media === 'dev' ? DOMAIN_STATIC : DOMAIN.img + '/' + site+"/"+client
+
+        const DOMAIN_TEMP = media === 'dev' ? DOMAIN + '/dev/tpl/' + site +"/"+client: DOMAIN.tpl + '/' + site+"/"+client
+        const DOMAIN_PAGE = media === 'dev' ? DOMAIN + '/dev/page/' + site+"/"+client : DOMAIN.page + '/' + site+"/"+client
 
 
         const USE_HASH = option.useHash ? !0 : (media === 'dev' ? !1 : !0)
@@ -136,9 +141,10 @@ fis.pcat = function(option) {
         });
         fis.set('namespace', packageJson.name);
         fis.set('pc-project', packageJson.name);
+        fis.set('pc-dir', packageJson.dir);
         fis.set('pc-version', packageJson.version);
 
-        media !== 'dev' && console.log(`preview(${DOMAIN_PAGE}/${packageJson.name}/${packageJson.version}/)`)
+        media !== 'dev' && console.log(`preview(${DOMAIN_PAGE}/${packageJson.name})`)
 
         fis
             .match('(*)', {
@@ -162,7 +168,7 @@ fis.pcat = function(option) {
         })
 
         .match(/^\/page\/(.*?\/.*?\.(js|jsx)$)/i, {
-                release: "${pc-project}/p/$1",
+                release: "${pc-project}/${pc-dir}/p/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
                     to: STATIC_DIR
@@ -176,7 +182,7 @@ fis.pcat = function(option) {
                 }
             })
             .match(/^\/page\/(.*?\/.*?\.(css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
-                release: "${pc-project}/p/$1",
+                release: "${pc-project}/${pc-dir}/p/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
                     to: STATIC_DIR
@@ -187,7 +193,7 @@ fis.pcat = function(option) {
                 }
             })
             .match(/^\/page\/(.*?\/.*?\.(html)$)/i, {
-                release: "${pc-project}/$1",
+                release: "${pc-project}/${pc-dir}/$1",
                 useHash: USE_HASH,
                 useSameNameRequire: true,
                 isPage: true,
@@ -203,7 +209,7 @@ fis.pcat = function(option) {
             })
 
         .match(/^\/page\/(.*?\/.*?\.(jpg|png|gif)$)/i, {
-            release: "${pc-project}/p/$1",
+            release: "${pc-project}/${pc-dir}/p/$1",
             useHash: USE_HASH,
             useMap: !0,
             deploy: fis.plugin('local-deliver', {
@@ -213,7 +219,7 @@ fis.pcat = function(option) {
         })
 
         .match(/^\/widget\/(.*?\/.*?\.(js|jsx)$)/i, {
-                release: "${pc-project}/w/$1",
+                release: "${pc-project}/${pc-dir}/w/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
                     to: STATIC_DIR
@@ -229,7 +235,7 @@ fis.pcat = function(option) {
                 }
             })
             .match(/^\/widget\/(.*?\/.*?\.(css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
-                release: "${pc-project}/w/$1",
+                release: "${pc-project}/${pc-dir}/w/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
                     to: STATIC_DIR
@@ -240,7 +246,7 @@ fis.pcat = function(option) {
                 }
             })
             .match(/^\/widget\/(.*?\/.*?\.(jpg|png|gif)$)/i, {
-                release: "${pc-project}/w/$1",
+                release: "${pc-project}/${pc-dir}/w/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
                     to: STATIC_DIR
@@ -248,7 +254,7 @@ fis.pcat = function(option) {
                 domain: DOMAIN_IMG
             })
             .match(/^\/widget\/(.*?\/.*?\.(html|tpl)$)/i, {
-                release: "${pc-project}/$1",
+                release: "${pc-project}/${pc-dir}/$1",
                 useHash: USE_HASH,
                 isHtmlLike: true,
                 isWidget: true,
@@ -262,7 +268,7 @@ fis.pcat = function(option) {
 
         .match(/^\/modules\/((.*?)\/.*?\.(js|jsx|css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
             useHash: USE_HASH,
-            release: "${pc-project}/m/$1",
+            release: "${pc-project}/${pc-dir}/m/$1",
             deploy: fis.plugin('local-deliver', {
                 to: STATIC_DIR
             }),
@@ -274,7 +280,7 @@ fis.pcat = function(option) {
         })
 
         .match(/^\/modules\/((.*?)\/.*?\.(png|jpg|gif|jpeg)$)/i, {
-            release: "${pc-project}/m/$1",
+            release: "${pc-project}/${pc-dir}/m/$1",
             useHash: USE_HASH,
             deploy: fis.plugin('local-deliver', {
                 to: STATIC_DIR
@@ -368,14 +374,14 @@ fis.pcat = function(option) {
     })
     .match("/map.json", {
       useHash: false,
-      release: "${pc-project}/$0",
+      release: "${pc-project}/${pc-dir}/$0",
       deploy: fis.plugin('local-deliver', {
           to: MAP_DIR
       })
     })
     .match("/package.json", {
       useHash: false,
-      release: "${pc-project}/$0",
+      release: "${pc-project}/${pc-dir}/$0",
       deploy: fis.plugin('local-deliver', {
           to: PACKAGE_DIR
       })
