@@ -66,14 +66,18 @@ fis.pcat = function(option) {
         const _now = new Date
 
         const projectDir = fis.project.getProjectPath()
-        const orgInfo = `path:\${pc-project}$0  tag:${releaseConfig.tag||''}  update by ${releaseConfig.author||''} at ${_now.toLocaleString()}`
         const staticOrg = function(content, file, conf) {
             return `/*! ${file.release}*/\n${content}`
         }
+
+
         const packageJson = option.packageJson
         const site = packageJson.site || path.resolve(projectDir, "../").split(path.sep).pop()
         const client = packageJson.client;
         const dir = packageJson.dir;
+
+        const orgInfo = `path: ${packageJson.site}/${packageJson.client}/${packageJson.dir ? packageJson.dir+"/":""}${packageJson.name}/$1  tag:${releaseConfig.tag||''}  update by ${releaseConfig.author||''} at ${_now.toLocaleString()}`
+
 
         const domain = {
             dev: option.domain.dev,
@@ -107,6 +111,8 @@ fis.pcat = function(option) {
 
         const outputDir = path.resolve(tempPath, "www")
 
+
+
         const MAP_DIR = path.resolve(outputDir, './' + media, "./map", './' + site,client)
         const PACKAGE_DIR = path.resolve(outputDir, './' + media, "./package", './' + site,client)
         const STATIC_DIR = path.resolve(outputDir, './' + media, "./static", './' + site,client)
@@ -115,9 +121,9 @@ fis.pcat = function(option) {
 
         const DOMAIN = domain[media]
 
-        const DOMAIN_STATIC = media === 'dev' ? DOMAIN + '/dev/static/' + site+"/"+client : DOMAIN.static + '/' + site+"/"+client
+        const DOMAIN_STATIC = media === 'dev' ? DOMAIN + '/dev/static/' + site+'/'+client : DOMAIN.static + '/' + site+'/'+client
 
-        const DOMAIN_JS_CSS = media === DOMAIN_STATIC
+        const DOMAIN_JS_CSS = media === 'dev' ? DOMAIN_STATIC : DOMAIN.static + '/' + site+'/'+client
 
         const DOMAIN_IMG = media === 'dev' ? DOMAIN_STATIC : DOMAIN.img + '/' + site+"/"+client
 
@@ -168,7 +174,7 @@ fis.pcat = function(option) {
         })
 
         .match(/^\/page\/(.*?\/.*?\.(js|jsx)$)/i, {
-                release: "${pc-project}/${pc-dir}/p/$1",
+                release: "${pc-project}/p/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
                     to: STATIC_DIR
@@ -182,7 +188,7 @@ fis.pcat = function(option) {
                 }
             })
             .match(/^\/page\/(.*?\/.*?\.(css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
-                release: "${pc-project}/${pc-dir}/p/$1",
+                release: "${pc-dir}/${pc-project}/p/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
                     to: STATIC_DIR
@@ -193,7 +199,7 @@ fis.pcat = function(option) {
                 }
             })
             .match(/^\/page\/(.*?\/.*?\.(html)$)/i, {
-                release: "${pc-project}/${pc-dir}/$1",
+                release: "${pc-dir}/${pc-project}/$1",
                 useHash: USE_HASH,
                 useSameNameRequire: true,
                 isPage: true,
@@ -209,7 +215,7 @@ fis.pcat = function(option) {
             })
 
         .match(/^\/page\/(.*?\/.*?\.(jpg|png|gif)$)/i, {
-            release: "${pc-project}/${pc-dir}/p/$1",
+            release: "${pc-dir}/${pc-project}/p/$1",
             useHash: USE_HASH,
             useMap: !0,
             deploy: fis.plugin('local-deliver', {
@@ -219,7 +225,7 @@ fis.pcat = function(option) {
         })
 
         .match(/^\/widget\/(.*?\/.*?\.(js|jsx)$)/i, {
-                release: "${pc-project}/${pc-dir}/w/$1",
+                release: "${pc-dir}/${pc-project}/w/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
                     to: STATIC_DIR
@@ -235,7 +241,7 @@ fis.pcat = function(option) {
                 }
             })
             .match(/^\/widget\/(.*?\/.*?\.(css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
-                release: "${pc-project}/${pc-dir}/w/$1",
+                release: "${pc-dir}/${pc-project}/w/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
                     to: STATIC_DIR
@@ -246,7 +252,7 @@ fis.pcat = function(option) {
                 }
             })
             .match(/^\/widget\/(.*?\/.*?\.(jpg|png|gif)$)/i, {
-                release: "${pc-project}/${pc-dir}/w/$1",
+                release: "${pc-dir}/${pc-project}/w/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
                     to: STATIC_DIR
@@ -254,7 +260,7 @@ fis.pcat = function(option) {
                 domain: DOMAIN_IMG
             })
             .match(/^\/widget\/(.*?\/.*?\.(html|tpl)$)/i, {
-                release: "${pc-project}/${pc-dir}/$1",
+                release: "${pc-dir}/${pc-project}/$1",
                 useHash: USE_HASH,
                 isHtmlLike: true,
                 isWidget: true,
@@ -268,7 +274,7 @@ fis.pcat = function(option) {
 
         .match(/^\/modules\/((.*?)\/.*?\.(js|jsx|css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
             useHash: USE_HASH,
-            release: "${pc-project}/${pc-dir}/m/$1",
+            release: "${pc-dir}/${pc-project}/m/$1",
             deploy: fis.plugin('local-deliver', {
                 to: STATIC_DIR
             }),
@@ -280,7 +286,7 @@ fis.pcat = function(option) {
         })
 
         .match(/^\/modules\/((.*?)\/.*?\.(png|jpg|gif|jpeg)$)/i, {
-            release: "${pc-project}/${pc-dir}/m/$1",
+            release: "${pc-dir}/${pc-project}/m/$1",
             useHash: USE_HASH,
             deploy: fis.plugin('local-deliver', {
                 to: STATIC_DIR
@@ -349,7 +355,6 @@ fis.pcat = function(option) {
                                         // file.setContent(file.getContent().replace("__WIDGETLOADEDLISTS__", JSON.stringify(fis.get("widgetloadedList"))));
 
 
-
                                         if (!file.orgInfo) return;
                                         let content = file.getContent()
                                         file.setContent(`<!--${file.orgInfo}-->\n${content}`)
@@ -374,14 +379,14 @@ fis.pcat = function(option) {
     })
     .match("/map.json", {
       useHash: false,
-      release: "${pc-project}/${pc-dir}/$0",
+      release: "${pc-dir}/${pc-project}/$0",
       deploy: fis.plugin('local-deliver', {
           to: MAP_DIR
       })
     })
     .match("/package.json", {
       useHash: false,
-      release: "${pc-project}/${pc-dir}/$0",
+      release: "${pc-dir}/${pc-project}/$0",
       deploy: fis.plugin('local-deliver', {
           to: PACKAGE_DIR
       })
@@ -393,6 +398,7 @@ fis.pcat = function(option) {
 
     if(useWigetList){
         let wlist = require("./plugin/widget.js")
+
         fis.match("::package",{
           prepackager: function(ret, conf, settings, opt) {
             // ret.src 所有的源码，结构是 {'<subpath>': <File 对象>}
