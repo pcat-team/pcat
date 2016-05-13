@@ -76,7 +76,7 @@ fis.pcat = function(option) {
         const client = packageJson.client;
         const dir = packageJson.dir;
 
-        const orgInfo = `path: ${packageJson.site}/${packageJson.client}/${packageJson.dir ? packageJson.dir+"/":""}${packageJson.name}/$1  tag:${releaseConfig.tag||''}  update by ${releaseConfig.author||''} at ${_now.toLocaleString()}`
+        const orgInfo = `path:${packageJson.site}/${packageJson.client}/${packageJson.dir ? packageJson.dir+"/":""}${packageJson.name}/$1  tag:${releaseConfig.tag||''}  update by ${releaseConfig.author||''} at ${_now.toLocaleString()}`
 
 
         const domain = {
@@ -174,7 +174,7 @@ fis.pcat = function(option) {
         })
 
         .match(/^\/page\/(.*?\/.*?\.(js|jsx)$)/i, {
-                release: "${pc-project}/p/$1",
+                release: "${pc-dir}/${pc-project}/p/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
                     to: STATIC_DIR
@@ -306,11 +306,12 @@ fis.pcat = function(option) {
                     comboTo: '-111'
                 }
             })
-            .match('/modules/jquery/*.js', {
+            .match('/modules/{jquery,zepto}/*.js', {
                 extras: {
                     comboTo: '-112'
                 }
             })
+
             .match("*.html", {
                 parser: fis.plugin("widget-load", {
                     project: fis.get("PCAT.project"),
