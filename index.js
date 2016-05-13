@@ -306,7 +306,7 @@ fis.pcat = function(option) {
                     comboTo: '-111'
                 }
             })
-            .match('/modules/{jquery,zepto}/*.js', {
+            .match('/modules/{jquery,jquery-1.x,jquery-2.x,zepto}/*.js', {
                 extras: {
                     comboTo: '-112'
                 }
