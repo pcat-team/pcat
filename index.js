@@ -281,7 +281,8 @@ fis.pcat = function(option) {
             id: "$2",
             isMod: !0,
             extras: {
-                comboTo: '5'
+                comboTo: '5',
+                comboOrder: 1
             }
         })
 
@@ -311,6 +312,12 @@ fis.pcat = function(option) {
                     comboTo: '-112'
                 }
             })
+            .match('/modules/reset/*.css', {
+                extras: {
+                     comboOrder: 0
+                }
+            })
+
 
             .match("*.html", {
                 parser: fis.plugin("widget-load", {
