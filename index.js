@@ -365,7 +365,7 @@ fis.pcat = function(option) {
 
                                         if (!file.orgInfo) return;
                                         let content = file.getContent()
-                                        file.setContent(`<!--${file.orgInfo}-->\n${content}`)
+                                        file.setContent(content.replace(/\<head\>/g,`<!--${file.orgInfo}-->\n<head>`))
                                             //for server preview
                                         let hash = file.getHash()
                                         let root = `/${media}/page/${site}${media ==='dev' ? file.release : file.release.replace('\.html',`_${hash}.html`)}`
