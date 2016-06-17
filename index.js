@@ -312,7 +312,7 @@ fis.pcat = function(option) {
                     comboTo: '-112'
                 }
             })
-            .match('/modules/{reset,wap.reset}/*.css', {
+            .match('/modules/{reset,wap.reset,reset.wap}/*.css', {
                 extras: {
                      comboOrder: 0
                 }
