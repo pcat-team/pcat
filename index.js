@@ -184,7 +184,7 @@ fis.pcat = function(option) {
                 },
                 extras: {
                     comboTo: '6',
-                    comboOrder: 3
+                    comboOrder: style. = ''
                 }
             })
             .match(/^\/page\/(.*?\/.*?\.(css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
@@ -195,7 +195,7 @@ fis.pcat = function(option) {
                 }),
                 extras: {
                     comboTo: '6',
-                    comboOrder: 3
+                    comboOrder: 1
                 }
             })
             .match(/^\/page\/(.*?\/.*?\.(html)$)/i, {
