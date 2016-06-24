@@ -150,7 +150,7 @@ fis.pcat = function(option) {
         fis.set('pc-dir', packageJson.dir);
         fis.set('pc-version', packageJson.version);
 
-        media !== 'dev' &&  console.log(`preview(${DOMAIN_PAGE}/${packageJson.dir ? packageJson.dir+"/":""}${packageJson.name})`);
+        media !== 'dev' &&  console.log(`preview(${DOMAIN_PAGE}/${packageJson.dir ? packageJson.dir+"/":""}${packageJson.name})/${releaseConfig.tag}`);
 
         fis
             .match('(*)', {
@@ -184,7 +184,7 @@ fis.pcat = function(option) {
                 },
                 extras: {
                     comboTo: '6',
-                    comboOrder: style. = ''
+                    comboOrder: 1
                 }
             })
             .match(/^\/page\/(.*?\/.*?\.(css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
