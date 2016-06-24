@@ -199,7 +199,7 @@ fis.pcat = function(option) {
                 }
             })
             .match(/^\/page\/(.*?\/.*?\.(html)$)/i, {
-                release: "${pc-dir}/${pc-project}/$1",
+                release: `${packageJson.dir}/${packageJson.name}/${releaseConfig.tag?releaseConfig.tag+"/":""}$1`,
                 useHash: USE_HASH,
                 useSameNameRequire: true,
                 isPage: true,
