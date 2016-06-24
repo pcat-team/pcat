@@ -150,7 +150,7 @@ fis.pcat = function(option) {
         fis.set('pc-dir', packageJson.dir);
         fis.set('pc-version', packageJson.version);
 
-        media !== 'dev' &&  console.log(`preview(${DOMAIN_PAGE}/${packageJson.dir ? packageJson.dir+"/":""}${packageJson.name})/${releaseConfig.tag}`);
+        media !== 'dev' &&  console.log(`preview(${DOMAIN_PAGE}/${packageJson.dir ? packageJson.dir+"/":""}${packageJson.name}/${releaseConfig.tag})`);
 
         fis
             .match('(*)', {
