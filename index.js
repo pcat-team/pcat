@@ -272,13 +272,43 @@ fis.pcat = function(option) {
                 domain: ''
             })
 
-        .match(/^\/modules\/((.*?)\/.*?\.(js|jsx|css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
+
+
+        .match(/^\/modules\/((.*?)\/.*?\.(eot|svg|ttf|woff|woff2)$)/i, {
+            useHash: USE_HASH,
+            release: "${pc-dir}/${pc-project}/m/$1",
+            deploy: fis.plugin('local-deliver', {
+                to: STATIC_DIR
+            }),
+            extras: {
+                comboTo: '5',
+                comboOrder: 1
+            }
+        })
+        .match(/^\/modules\/((.*?)\/.*?\.(js|jsx)$)/i, {
             useHash: USE_HASH,
             release: "${pc-dir}/${pc-project}/m/$1",
             deploy: fis.plugin('local-deliver', {
                 to: STATIC_DIR
             }),
             id: "$2",
+            isMod: !0,
+            useSameNameRequire: true,
+            extras: {
+                comboTo: '5',
+                comboOrder: 1
+            }
+        })
+
+   
+
+        .match(/^\/modules\/((.*?)\/.*?\.(css|less|scss)$)/i, {
+            useHash: USE_HASH,
+            release: "${pc-dir}/${pc-project}/m/$1",
+            deploy: fis.plugin('local-deliver', {
+                to: STATIC_DIR
+            }),
+            id: "$2.css",
             isMod: !0,
             extras: {
                 comboTo: '5',
