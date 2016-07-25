@@ -240,7 +240,14 @@ fis.pcat = function(option) {
                     comboOrder: 2
                 }
             })
-            .match(/^\/widget\/(.*?\/.*?\.(css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
+            .match(/^\/widget\/(.*?\/.*?\.(swf|mp3|wav|ogg|eot|svg|ttf|woff|woff2)$)/i, {
+                release: "${pc-dir}/${pc-project}/w/$1",
+                useHash: USE_HASH,
+                deploy: fis.plugin('local-deliver', {
+                    to: STATIC_DIR
+                })
+            })
+              .match(/^\/widget\/(.*?\/.*?\.(css|less|scss|sass)$)/i, {
                 release: "${pc-dir}/${pc-project}/w/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
@@ -274,16 +281,12 @@ fis.pcat = function(option) {
 
 
 
-        .match(/^\/modules\/((.*?)\/.*?\.(eot|svg|ttf|woff|woff2)$)/i, {
+        .match(/^\/modules\/((.*?)\/.*?\.(swf|mp3|wav|ogg|eot|svg|ttf|woff|woff2)$)/i, {
             useHash: USE_HASH,
             release: "${pc-dir}/${pc-project}/m/$1",
             deploy: fis.plugin('local-deliver', {
                 to: STATIC_DIR
-            }),
-            extras: {
-                comboTo: '5',
-                comboOrder: 1
-            }
+            })
         })
         .match(/^\/modules\/((.*?)\/.*?\.(js|jsx)$)/i, {
             useHash: USE_HASH,
