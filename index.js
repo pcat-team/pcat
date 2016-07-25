@@ -187,7 +187,14 @@ fis.pcat = function(option) {
                     comboOrder: 1
                 }
             })
-            .match(/^\/page\/(.*?\/.*?\.(css|less|scss|sass|eot|svg|ttf|woff|woff2)$)/i, {
+            .match(/^\/page\/(.*?\/.*?\.(swf|mp3|wav|ogg|eot|svg|ttf|woff|woff2)$)/i, {
+                release: "${pc-dir}/${pc-project}/p/$1",
+                useHash: USE_HASH,
+                deploy: fis.plugin('local-deliver', {
+                    to: STATIC_DIR
+                })
+            })
+             .match(/^\/page\/(.*?\/.*?\.(css|less|scss|sass)$)/i, {
                 release: "${pc-dir}/${pc-project}/p/$1",
                 useHash: USE_HASH,
                 deploy: fis.plugin('local-deliver', {
