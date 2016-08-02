@@ -1,6 +1,6 @@
 {
   "name": "pcat",
-  "version": "2.0.21",
+  "version": "2.1.0",
   "description": "pcground front-end node.js tool",
   "main": "index.js",
   "scripts": {
@@ -31,6 +31,7 @@
     "request": "2.69.0",
     "fis3-hook-commonjs": "0.1.8",
     "fis3-hook-components": "1.0.4",
+    "fis3-parser-html-uri": "1.0.1",
     "pcat-postpackager-autocombo": "^1.0.0",
     "fis-parser-babel-5.x": "1.3.0",
     "pcat-parser-widget-load": "^1.0.6",

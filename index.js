@@ -360,13 +360,13 @@ fis.pcat = function(option) {
 
 
             .match("*.html", {
-                parser: fis.plugin("widget-load", {
+                parser:[ fis.plugin("widget-load", {
                     project: fis.get("PCAT.project"),
                     tagName: fis.get("PCAT.tagName"),
                     mapOutputPath: MAP_DIR,
                     templateOutputPath: TEMP_DIR,
                     packageOutputPath: PACKAGE_DIR
-                })
+                }),fis.plugin('html-uri')]
             })
             .match('**.css', {
                 useSprite: true
