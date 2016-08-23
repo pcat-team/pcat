@@ -73,6 +73,7 @@ fis.pcat = function(option) {
 
         const packageJson = option.packageJson
         const site = packageJson.site || path.resolve(projectDir, "../").split(path.sep).pop()
+        option.site = site;
         const client = packageJson.client;
         const dir = packageJson.dir;
 
@@ -106,11 +107,16 @@ fis.pcat = function(option) {
         const useWigetList = fis.project.currentMedia() === 'list'
         const media = useWigetList ? 'dev' : (fis.project.currentMedia() || 'dev')
 
+        // 下载ssi文件到本地
+        if(media == "ssi"){
+            require("./plugin/ssi.js").load(option);
+            return;
+        }
+
         // 设置输出路径 
         // const outputDir     =  media === 'dev' ? path.resolve(tempPath, "www") : '/data/web/pcat/'
 
         const outputDir = path.resolve(tempPath, "www")
-
 
 
         const MAP_DIR = path.resolve(outputDir, './' + media, "./map", './' + site,client)
@@ -172,6 +178,16 @@ fis.pcat = function(option) {
                 to: ""
             })
         })
+
+      .match('/ssi/**', {
+            release: '$0',
+            useHash:false,
+            deploy: fis.plugin('local-deliver', {
+                to: ""
+            })
+        })
+
+     
 
         .match(/^\/page\/(.*?\/.*?\.(js|jsx)$)/i, {
                 release: "${pc-dir}/${pc-project}/p/$1",
