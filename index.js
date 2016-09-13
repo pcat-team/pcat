@@ -389,12 +389,12 @@ fis.pcat = function(option) {
             })
             .match('**.{sass,scss}', {
                 useSprite: true,
-                parser: fis.plugin('sass2'),
+                parser: fis.plugin('node-sass'),
                 rExt: '.css'
             })
             .match('**.less', {
                 useSprite: true,
-                parser: fis.plugin('less'),
+                parser: fis.plugin('less-2.x'),
                 rExt: '.css'
             })
             .match('**.jsx', {
