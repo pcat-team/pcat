@@ -54,7 +54,7 @@ fis.config.set("component.dir", "modules");
  * @param  {Object} option 项目差异配置
  * {
  *   domain: {
- *     dev : '' //开发时服务器的域名 http://my.pconline.com.cn || ''
+ *     dev : '' //开发时服务器的域名 //my.pconline.com.cn || ''
  *   },
  *   packageJson: {} //子系统的 package json 对象
  * }
@@ -83,22 +83,22 @@ fis.pcat = function(option) {
         const domain = {
             dev: option.domain.dev,
             qa: {
-                'static': 'http://ue.pc.com.cn',
-                'img': 'http://ueimg.pc.com.cn',
-                'page': 'http://zzpcat.' + site + '.com.cn/qa/page',
-                'tpl': 'http://zzpcat.' + site + '.com.cn/qa/tpl'
+                'static': '//ue.pc.com.cn',
+                'img': '//ueimg.pc.com.cn',
+                'page': '//zzpcat.' + site + '.com.cn/qa/page',
+                'tpl': '//zzpcat.' + site + '.com.cn/qa/tpl'
             },
             ol: {
-                'static': 'http://ue.3conline.com',
-                'img': 'http://ueimg.3conline.com',
-                'page': 'http://zzpcat.' + site + '.com.cn/ol/page',
-                'tpl': 'http://zzpcat.' + site + '.com.cn/ol/tpl'
+                'static': '//ue.3conline.com',
+                'img': '//ueimg.3conline.com',
+                'page': '//zzpcat.' + site + '.com.cn/ol/page',
+                'tpl': '//zzpcat.' + site + '.com.cn/ol/tpl'
             },
             online: {
-                'static': 'http://ue.3conline.com',
-                'img': 'http://ueimg.3conline.com',
-                'page': 'http://zzpcat.' + site + '.com.cn/online/page',
-                'tpl': 'http://zzpcat.' + site + '.com.cn/online/tpl'
+                'static': '//ue.3conline.com',
+                'img': '//ueimg.3conline.com',
+                'page': '//zzpcat.' + site + '.com.cn/online/page',
+                'tpl': '//zzpcat.' + site + '.com.cn/online/tpl'
             }
         }
 
