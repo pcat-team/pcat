@@ -13,20 +13,19 @@
 
           parser: function(content, file) {
 
-              var fileReg = /<!--#include\svirtual="([^"]+)"\s*-->/gim;
+              var fileReg = /<!--#include\s+virtual\s*=\s*(["'])([^"']+)\1\s*-->/gim;
 
 
-              content = content.replace(fileReg, function(ret, src) {
-
+              content = content.replace(fileReg, function(ret, split, src) {
                   // 指定域名
-                  if(opt.ssiDomain && opt.ssiDomain[src]){
+                  if (opt.ssiDomain && opt.ssiDomain[src]) {
                       ssiDomain = opt.ssiDomain[src];
 
                       // 全站
-                  }else if(src.split("/")[1] == "global_ssi"){
-                     ssiDomain = "http://www." + opt.site + ".com.cn"
-                  }else{
-                        fis.log.error("请在fis-config.js配置文件中指定 SSI [" + src + "]的域名！")
+                  } else if (src.split("/")[1] == "global_ssi") {
+                      ssiDomain = "http://www." + opt.site + ".com.cn"
+                  } else {
+                      fis.log.error("请在fis-config.js配置文件中指定 SSI [" + src + "]的域名！")
                   }
 
 
