@@ -19,7 +19,7 @@
               content = content.replace(fileReg, function(ret, src) {
 
                   // 指定域名
-                  if(opt.ssiDomain || opt.ssiDomain[src]){
+                  if(opt.ssiDomain && opt.ssiDomain[src]){
                       ssiDomain = opt.ssiDomain[src];
 
                       // 全站
