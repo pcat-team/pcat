@@ -18,23 +18,17 @@
 
               content = content.replace(fileReg, function(ret, src) {
 
-                  // 全站ssi
-                  if (src.split("/")[1] == "global_ssi") {
-
-                      ssiDomain = "http://www." + opt.site + ".com.cn"
-
-                  } else {
-
-
-
-                      if (!opt.ssiDomain || !opt.ssiDomain[src]) {
-                          fis.log.error("请在fis-config.js配置文件中指定 SSI [" + src + "]的域名！")
-                      }
-
+                  // 指定域名
+                  if(opt.ssiDomain || opt.ssiDomain[src]){
                       ssiDomain = opt.ssiDomain[src];
 
-
+                      // 全站
+                  }else if(src.split("/")[1] == "global_ssi"){
+                     ssiDomain = "http://www." + opt.site + ".com.cn"
+                  }else{
+                        fis.log.error("请在fis-config.js配置文件中指定 SSI [" + src + "]的域名！")
                   }
+
 
                   var file = path.resolve(fis.project.getProjectPath(), "ssi", "." + src)
 
