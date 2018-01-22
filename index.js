@@ -84,6 +84,7 @@ fis.pcat = function(option) {
  
     const domain = {
         dev: option.domain.dev,
+        ssi: option.domain.dev,
         qa: {
             'static': '//ue.pc.com.cn',
             'img': '//ueimg.pc.com.cn',
@@ -108,12 +109,6 @@ fis.pcat = function(option) {
 
     const useWigetList = fis.project.currentMedia() === 'list'
     const media = useWigetList ? 'dev' : (fis.project.currentMedia() || 'dev')
-
-    // 下载ssi文件到本地
-    if (media == "ssi") {
-        require("./plugin/ssi.js").load(option);
-        return;
-    }
 
     // 设置输出路径 
     // const outputDir     =  media === 'dev' ? path.resolve(tempPath, "www") : '/data/web/pcat/'
@@ -146,6 +141,7 @@ fis.pcat = function(option) {
     const WLIST_HTML_PATH = 'page/_wlist/**'
 
     fis.set("PCAT", {
+        x:option,
         useCombo: option.combo,
         project: packageJson.name,
         version: packageJson.version,
@@ -153,6 +149,7 @@ fis.pcat = function(option) {
         site: site,
         tagName: "widget" //约束为与组件目录同名
     });
+    fis.set("PCATOPTION",option)
     fis.set('namespace', packageJson.name);
     fis.set('pc-project', packageJson.name);
     fis.set('pc-dir', packageJson.dir);
@@ -181,7 +178,7 @@ fis.pcat = function(option) {
             })
         })
 
-        .match('/ssi/**', {
+        .match('/_ssi/**', {
             release: '$0',
             useHash: false,
             deploy: fis.plugin('local-deliver', {
@@ -384,7 +381,7 @@ fis.pcat = function(option) {
                 mapOutputPath: MAP_DIR,
                 templateOutputPath: TEMP_DIR,
                 packageOutputPath: PACKAGE_DIR
-            }), fis.plugin('html-uri')]
+            }), fis.plugin("ssi-render"),fis.plugin('html-uri')]
         })
         .match('**.css', {
             useSprite: true
@@ -437,10 +434,10 @@ fis.pcat = function(option) {
                 mapOutputPath: MAP_DIR,
                 packageOutputPath: PACKAGE_DIR
             }),
-            postpackager: fis.plugin("autocombo", {
+            postpackager: [fis.plugin("autocombo", {
                 domain: DOMAIN_STATIC,
                 combo: fis.get("PCAT.useCombo")
-            }),
+            }), require("./plugin/ssi.js")],
             spriter: fis.plugin('csssprites')
         })
         .match("/map.json", {
@@ -463,7 +460,7 @@ fis.pcat = function(option) {
 
 
     if (useWigetList) {
-        let wlist = require("./plugin/widget.js")
+        // let wlist = require("./plugin/widget.js")
 
         fis.match("::package", {
             prepackager: function(ret, conf, settings, opt) {

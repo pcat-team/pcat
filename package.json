@@ -1,6 +1,6 @@
 {
   "name": "pcat",
-  "version": "2.5.5",
+  "version": "2.5.7",
   "description": "pcground front-end node.js tool",
   "main": "index.js",
   "scripts": {
@@ -37,6 +37,7 @@
     "pcat-postpackager-autocombo": "^1.0.0",
     "pcat-parser-widget-load": "^1.0.6",
     "pcat-packager-widget-render": "^1.0.10",
+    "pcat-parser-ssi-render": "^1.0.0",
     "pcat-command-server": "^1.1.7",
     "pcat-command-create": "^2.1.0",
     "pcat-command-www1": "^0.0.1",
