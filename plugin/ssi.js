@@ -12,7 +12,7 @@
       // ret.map 如果是 spriter、postpackager 这时候已经能得到打包结果了，
       //         可以修改静态资源列表或者其他
     
-      // if(fis.project.currentMedia())
+      if(fis.project.currentMedia() != "ssi") return;
 
 
       fis.util.map(ret.src, function(subpath, file) {
