@@ -21,6 +21,8 @@ fis.cli.version = function() {
     ].join("\n");
     fis.log.info('\n version: \n' + version.cyan.bold + '\n\n');
 }
+
+
 // 添加命令描述
 fis.set("modules.commands", ["release", "server", "create", "cnpm"])
 
@@ -60,6 +62,8 @@ fis.config.set("component.dir", "modules");
  * }
  */
 fis.pcat = function(option) {
+   
+
     var fis = this
     var commonConfig = option.api;
 
@@ -105,6 +109,8 @@ fis.pcat = function(option) {
         }
     }
 
+    console.log(`当前版本：${('v' + fis.cli.info.version).yellow.bold}`);
+    
     const tempPath = fis.project.getTempPath()
 
     const useWigetList = fis.project.currentMedia() === 'list'
@@ -381,7 +387,8 @@ fis.pcat = function(option) {
                 mapOutputPath: MAP_DIR,
                 templateOutputPath: TEMP_DIR,
                 packageOutputPath: PACKAGE_DIR
-            }), fis.plugin("ssi-render"),fis.plugin('html-uri')]
+            }), fis.plugin('html-uri')]
+
         })
         .match('**.css', {
             useSprite: true
@@ -429,11 +436,11 @@ fis.pcat = function(option) {
 
 
             },
-            packager: fis.plugin("widget-render", {
+            packager: [fis.plugin("widget-render", {
                 tagName: fis.get("PCAT.tagName"),
                 mapOutputPath: MAP_DIR,
                 packageOutputPath: PACKAGE_DIR
-            }),
+            }),fis.plugin("ssi-render")],
             postpackager: [fis.plugin("autocombo", {
                 domain: DOMAIN_STATIC,
                 combo: fis.get("PCAT.useCombo")
