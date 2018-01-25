@@ -532,7 +532,7 @@ fis.pcat = function(option) {
                 }), fis.plugin('cms', {
                     project: packageJson.name,
                     userName: userName,
-                    api: commonConfig.cmsUpLoad || "cms." + site + ".com.cn"
+                    api: commonConfig.cmsUpLoad || "cms." + subDomain
                 })]
             })
     }
