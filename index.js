@@ -42,6 +42,8 @@ fis.set('project.ignore', ['output/**', 'fis-conf.js', 'node_modules/**']); // s
 
 fis.set('project.fileType.text', 'jsx');
 
+fis.config.set('project.fileType.text', 'es');
+
 // 自动定位requrie的id
 fis.config.set("component.dir", "modules");
 
@@ -62,7 +64,7 @@ fis.config.set("component.dir", "modules");
  * }
  */
 fis.pcat = function(option) {
-   
+
 
     var fis = this
     var commonConfig = option.api;
@@ -83,9 +85,9 @@ fis.pcat = function(option) {
 
     const orgInfo = `path:${packageJson.site}/${packageJson.client}/${packageJson.dir ? packageJson.dir+"/":""}${packageJson.name}/$1  tag:${releaseConfig.tag||''}  update by ${releaseConfig.author||''} at ${_now.toLocaleString()}`
 
-    const subDomain = (site == "geeknev") ? `${site}.com`:`${site}.com.cn`;
+    const subDomain = (site == "geeknev") ? `${site}.com` : `${site}.com.cn`;
 
- 
+
     const domain = {
         dev: option.domain.dev,
         ssi: option.domain.dev,
@@ -110,7 +112,7 @@ fis.pcat = function(option) {
     }
 
     console.log(`当前版本：${('v' + fis.cli.info.version).yellow.bold}`);
-    
+
     const tempPath = fis.project.getTempPath()
 
     const useWigetList = fis.project.currentMedia() === 'list'
@@ -147,7 +149,7 @@ fis.pcat = function(option) {
     const WLIST_HTML_PATH = 'page/_wlist/**'
 
     fis.set("PCAT", {
-        x:option,
+        x: option,
         useCombo: option.combo,
         project: packageJson.name,
         version: packageJson.version,
@@ -155,13 +157,18 @@ fis.pcat = function(option) {
         site: site,
         tagName: "widget" //约束为与组件目录同名
     });
-    fis.set("PCATOPTION",option)
+    fis.set("PCATOPTION", option)
     fis.set('namespace', packageJson.name);
     fis.set('pc-project', packageJson.name);
     fis.set('pc-dir', packageJson.dir);
     fis.set('pc-version', packageJson.version);
 
     media !== 'dev' && console.log(`preview(${DOMAIN_PAGE}/${packageJson.dir ? packageJson.dir+"/":""}${packageJson.name}/${releaseConfig.tag})`);
+
+    // 添加闭包,避免全局变量污染
+    function wrapClosure(content, file) {
+        return `;(function (window,document,undefined){\n${content}\n})(window,document);`
+    }
 
     fis
         .match('(*)', {
@@ -200,9 +207,7 @@ fis.pcat = function(option) {
             deploy: fis.plugin('local-deliver', {
                 to: STATIC_DIR
             }),
-            parser: function(content, file) {
-                return `;(function (window,document,undefined){\n${content}\n})(window,document);`
-            },
+            parser: wrapClosure,
             extras: {
                 comboTo: '6',
                 comboOrder: 1
@@ -259,9 +264,7 @@ fis.pcat = function(option) {
                 to: STATIC_DIR
             }),
             // id:'widget/$2',
-            parser: function(content, file) {
-                return `;(function (window,document,undefined){\n${content}\n})(window,document);`
-            },
+            parser: wrapClosure,
             isMod: !1,
             extras: {
                 comboTo: '6',
@@ -319,6 +322,7 @@ fis.pcat = function(option) {
         .match(/^\/modules\/((.*?)\/.*?\.(js|jsx)$)/i, {
             useHash: USE_HASH,
             release: "${pc-dir}/${pc-project}/m/$1",
+
             deploy: fis.plugin('local-deliver', {
                 to: STATIC_DIR
             }),
@@ -404,11 +408,7 @@ fis.pcat = function(option) {
             rExt: '.css'
         })
         .match('**.jsx', {
-            parser: fis.plugin('babel-5.x', {
-                blacklist: ['regenerator'],
-                sourceMaps: true,
-                stage: 3
-            }),
+            parser: fis.plugin('babel-6.x'),
             rExt: 'js'
         })
         .match("::package", {
@@ -440,7 +440,7 @@ fis.pcat = function(option) {
                 tagName: fis.get("PCAT.tagName"),
                 mapOutputPath: MAP_DIR,
                 packageOutputPath: PACKAGE_DIR
-            }),fis.plugin("ssi-render")],
+            }), fis.plugin("ssi-render")],
             postpackager: [fis.plugin("autocombo", {
                 domain: DOMAIN_STATIC,
                 combo: fis.get("PCAT.useCombo")
@@ -505,16 +505,20 @@ fis.pcat = function(option) {
         })
     }
 
-
     if (media === 'qa' || media === 'ol' || media === 'online') {
         fis
             .match('*.{scss,sass,less,css}', {
+                preprocessor: fis.plugin('autoprefixer', option.autoprefixerConfig || {
+                    "browsers": ["Android >= 2.1", "iOS >= 4", "ie >= 8", "firefox >= 15"],
+                    "cascade": true
+                }),
                 optimizer: [
                     fis.plugin('clean-css'),
                     staticOrg
                 ]
             })
             .match('*.js', {
+                parser: fis.plugin("babel-6.x",option.babelConfig || {},'prepend'),
                 optimizer: [
                     fis.plugin('uglify-js'),
                     staticOrg
