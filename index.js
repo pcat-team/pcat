@@ -518,12 +518,17 @@ fis.pcat = function(option) {
 
     if (media === 'qa' || media === 'dqa' || media === 'ol' || media === 'online') {
 
+        // 默认不加
+        if (option.autoprefixerConfig) {
+            fis
+                .match('*.{scss,sass,less,css}', {
+                    preprocessor: fis.plugin('autoprefixer', option.autoprefixerConfig)
+                })
+        }
+
         fis
             .match('*.{scss,sass,less,css}', {
-                preprocessor: fis.plugin('autoprefixer', option.autoprefixerConfig || {
-                    "browsers": ["Android >= 2.1", "iOS >= 4", "ie >= 8", "firefox >= 15"],
-                    "cascade": true
-                }),
+              
                 optimizer: [
                     fis.plugin('clean-css', option.cleanCssConfig || null),
                     staticOrg
@@ -556,8 +561,8 @@ fis.pcat = function(option) {
                     project: packageJson.name,
                     userName: userName,
                     api: commonConfig.cmsUpLoad || "cms." + subDomain
-                    
-                // deploy指定position貌似不生效
+
+                    // deploy指定position貌似不生效
                 }, "append")]
             })
     }
