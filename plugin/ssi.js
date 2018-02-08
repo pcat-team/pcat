@@ -62,6 +62,7 @@
   function downLoad(src) {
       var opt =  fis.get("PCATOPTION");
 
+      let ssiDomain = '';
       // 指定域名
       if (opt.ssiDomain && opt.ssiDomain[src]) {
           ssiDomain = opt.ssiDomain[src];
@@ -75,14 +76,19 @@
               ssiDomain = "http://www." + opt.site + ".com.cn";
           }
       } else {
-          fis.log.error("请在fis-config.js配置文件中指定 SSI [" + src + "]的域名！")
+        
+          if (opt.ssiDomain[src] == undefined) {
+              fis.log.warn(`ssi预览地址：${src} 未指定域名,如需忽略，请设为 false！`);
+          }
+
+          return;
       }
 
 
       var file = path.resolve(fis.project.getProjectPath(), "_ssi", "." + src)
 
-
       var url = ssiDomain + src;
+
       request(url, function(error, response, body) {
 
           if (!error && response.statusCode == 200) {
