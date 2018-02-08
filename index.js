@@ -42,7 +42,12 @@ fis.set('project.ignore', ['output/**', 'fis-conf.js', 'node_modules/**']); // s
 
 fis.set('project.fileType.text', 'jsx');
 
+// es6/es7
 fis.config.set('project.fileType.text', 'es');
+
+// typescript
+fis.config.set('project.fileType.text', 'ts');
+fis.config.set('project.fileType.text', 'tsx');
 
 // 自动定位requrie的id
 fis.config.set("component.dir", "modules");
@@ -90,6 +95,7 @@ fis.pcat = function(option) {
 
     const domain = {
         dev: option.domain.dev,
+        dqa: option.domain.dev,
         ssi: option.domain.dev,
         qa: {
             'static': '//ue.pc.com.cn',
@@ -132,18 +138,17 @@ fis.pcat = function(option) {
 
     const DOMAIN = domain[media]
 
-    const DOMAIN_STATIC = media === 'dev' ? DOMAIN + '/dev/static/' + site + '/' + client : DOMAIN.static + '/' + site + '/' + client
+    const DOMAIN_STATIC = (media === 'dev' || media === 'dqa') ? `${DOMAIN}/${media}/static/${site}/${client}` : `${DOMAIN.static}/${site}/${client}`
 
-    const DOMAIN_JS_CSS = media === 'dev' ? DOMAIN_STATIC : DOMAIN.static + '/' + site + '/' + client
+    const DOMAIN_JS_CSS = (media === 'dev' || media === 'dqa') ? DOMAIN_STATIC : `${DOMAIN.static}/${site}/${client}`
 
-    const DOMAIN_IMG = media === 'dev' ? DOMAIN_STATIC : DOMAIN.img + '/' + site + "/" + client
+    const DOMAIN_IMG = (media === 'dev' || media === 'dqa') ? DOMAIN_STATIC : `${DOMAIN.img}/${site}/${client}`
 
-    const DOMAIN_TEMP = media === 'dev' ? DOMAIN + '/dev/tpl/' + site + "/" + client : DOMAIN.tpl + '/' + site + "/" + client
-    const DOMAIN_PAGE = media === 'dev' ? DOMAIN + '/dev/page/' + site + "/" + client : DOMAIN.page + '/' + site + "/" + client
+    const DOMAIN_TEMP = (media === 'dev' || media === 'dqa') ? `${DOMAIN}/${media}/tpl/${site}/${client}` : `${DOMAIN.tpl}/${site}/${client}`
+    const DOMAIN_PAGE = (media === 'dev' || media === 'dqa') ? `${DOMAIN}/${media}/page/${site}/${client}` : `${DOMAIN.page}/${site}/${client}`
 
 
-    const USE_HASH = option.useHash ? !0 : (media === 'dev' ? !1 : !0)
-    // const USE_HASH = !1
+    const USE_HASH = option.useHash ? true : (media === 'dev' ? false : true)
 
     // 组件预览相关
     const WLIST_HTML_PATH = 'page/_wlist/**'
@@ -201,7 +206,7 @@ fis.pcat = function(option) {
 
 
 
-        .match(/^\/page\/(.*?\/.*?\.(js|jsx)$)/i, {
+        .match(/^\/page\/(.*?\/.*?\.(js|jsx|es|ts|tsx)$)/i, {
             release: "${pc-dir}/${pc-project}/p/$1",
             useHash: USE_HASH,
             deploy: fis.plugin('local-deliver', {
@@ -240,9 +245,10 @@ fis.pcat = function(option) {
                 isPage: true
             },
             useMap: true,
-            deploy: fis.plugin('local-deliver', {
-                to: PAGE_DIR
-            }),
+            deploy: [fis.plugin('local-deliver', {
+                to: PAGE_DIR,
+                tag: releaseConfig.tag
+            })],
             domain: DOMAIN_PAGE,
             orgInfo: orgInfo
         })
@@ -257,7 +263,7 @@ fis.pcat = function(option) {
             domain: DOMAIN_IMG
         })
 
-        .match(/^\/widget\/(.*?\/.*?\.(js|jsx)$)/i, {
+        .match(/^\/widget\/(.*?\/.*?\.(js|jsx|es|ts|tsx)$)/i, {
             release: "${pc-dir}/${pc-project}/w/$1",
             useHash: USE_HASH,
             deploy: fis.plugin('local-deliver', {
@@ -319,7 +325,7 @@ fis.pcat = function(option) {
                 to: STATIC_DIR
             })
         })
-        .match(/^\/modules\/((.*?)\/.*?\.(js|jsx)$)/i, {
+        .match(/^\/modules\/((.*?)\/.*?\.(js|jsx|es|ts|tsx)$)/i, {
             useHash: USE_HASH,
             release: "${pc-dir}/${pc-project}/m/$1",
 
@@ -407,9 +413,14 @@ fis.pcat = function(option) {
             parser: fis.plugin('less-2.x'),
             rExt: '.css'
         })
-        .match('**.jsx', {
-            parser: fis.plugin('babel-6.x'),
-            rExt: 'js'
+        .match('*.es', {
+            // es默认返回的是Buffer格式
+            parser: function(content, file) { return fis.util.readBuffer(content); },
+            rExt: '.js'
+        })
+        .match('*.{ts,tsx}', {
+            parser: fis.plugin("typescript", option.typescriptConfig || {}, 'prepend'),
+            rExt: '.js'
         })
         .match("::package", {
             prepackager: function(ret, conf, settings, opt) {
@@ -505,7 +516,8 @@ fis.pcat = function(option) {
         })
     }
 
-    if (media === 'qa' || media === 'ol' || media === 'online') {
+    if (media === 'qa' || media === 'dqa' || media === 'ol' || media === 'online') {
+
         fis
             .match('*.{scss,sass,less,css}', {
                 preprocessor: fis.plugin('autoprefixer', option.autoprefixerConfig || {
@@ -513,14 +525,20 @@ fis.pcat = function(option) {
                     "cascade": true
                 }),
                 optimizer: [
-                    fis.plugin('clean-css'),
+                    fis.plugin('clean-css', option.cleanCssConfig || null),
                     staticOrg
                 ]
             })
-            .match('*.js', {
-                parser: fis.plugin("babel-6.x",option.babelConfig || {},'prepend'),
+
+            .match('*.{es,jsx}', {
+                parser: fis.plugin("babel-6.x", option.babelConfig || {}, 'prepend'),
+                rExt: '.js'
+            })
+
+            .match('*.{js,es,ts,tsx,jsx}', {
+                // parser: fis.plugin("babel-6.x", option.babelConfig || {}, 'prepend'),
                 optimizer: [
-                    fis.plugin('uglify-js'),
+                    fis.plugin('uglify-js', option.uglifyJsConfig || null),
                     staticOrg
                 ]
             })
@@ -532,12 +550,15 @@ fis.pcat = function(option) {
         fis
             .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
                 deploy: [fis.plugin('local-deliver', {
-                    to: PAGE_DIR
+                    to: PAGE_DIR,
+                    tag: releaseConfig.tag
                 }), fis.plugin('cms', {
                     project: packageJson.name,
                     userName: userName,
                     api: commonConfig.cmsUpLoad || "cms." + subDomain
-                })]
+                    
+                // deploy指定position貌似不生效
+                }, "append")]
             })
     }
 }
