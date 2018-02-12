@@ -1,6 +1,6 @@
 {
   "name": "pcat",
-  "version": "2.6.6",
+  "version": "2.6.8",
   "description": "pcground front-end node.js tool",
   "main": "index.js",
   "scripts": {

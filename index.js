@@ -43,7 +43,7 @@ fis.set('project.ignore', ['output/**', 'fis-conf.js', 'node_modules/**']); // s
 fis.set('project.fileType.text', 'jsx');
 
 // es6/es7
-fis.config.set('project.fileType.text', 'es');
+fis.config.set('project.fileType.text', 'esx');
 
 // typescript
 fis.config.set('project.fileType.text', 'ts');
@@ -414,8 +414,17 @@ fis.pcat = function(option) {
             rExt: '.css'
         })
         .match('*.es', {
+            isJsLike: true,
             // es默认返回的是Buffer格式
-            parser: function(content, file) { return fis.util.readBuffer(content); },
+            parser: function(content, file) {
+
+                // 先判断是否为buffer格式
+                if(content && typeof content === "object" && Buffer.isBuffer(content)){
+                    content = fis.util.readBuffer(content);
+                }
+
+                return content;
+            },
             rExt: '.js'
         })
         .match('*.{ts,tsx}', {
@@ -518,25 +527,27 @@ fis.pcat = function(option) {
 
     if (media === 'qa' || media === 'dqa' || media === 'ol' || media === 'online') {
 
-        // 默认不加
+
+
         if (option.autoprefixerConfig) {
-            fis
-                .match('*.{scss,sass,less,css}', {
-                    preprocessor: fis.plugin('autoprefixer', option.autoprefixerConfig)
+            fis.match('*.{scss,sass,less,css}', {
+                preprocessor: fis.plugin('autoprefixer', option.autoprefixerConfig || {
+                    "browsers": ["Android >= 2.1", "iOS >= 4", "ie >= 8", "firefox >= 15"],
+                    "cascade": true
                 })
+            })
         }
 
         fis
             .match('*.{scss,sass,less,css}', {
-              
+
                 optimizer: [
                     fis.plugin('clean-css', option.cleanCssConfig || null),
                     staticOrg
                 ]
             })
-
             .match('*.{es,jsx}', {
-                parser: fis.plugin("babel-6.x", option.babelConfig || {}, 'prepend'),
+                parser: fis.plugin("babel-6.x", option.babelConfig || {}, 'append'),
                 rExt: '.js'
             })
 
@@ -561,8 +572,6 @@ fis.pcat = function(option) {
                     project: packageJson.name,
                     userName: userName,
                     api: commonConfig.cmsUpLoad || "cms." + subDomain
-
-                    // deploy指定position貌似不生效
                 }, "append")]
             })
     }
