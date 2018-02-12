@@ -1,6 +1,6 @@
 {
   "name": "pcat",
-  "version": "2.6.8",
+  "version": "2.7.0",
   "description": "pcground front-end node.js tool",
   "main": "index.js",
   "scripts": {
@@ -45,6 +45,7 @@
     "pcat-server-node": "^1.2.0",
     "pcat-deploy-cms": "^1.0.5",
     "fis3-preprocessor-autoprefixer": "^0.1.1",
+    "fis-spriter-csssprites": "^0.4.0",
     "pcat-deploy-local-deliver":"^1.0.0",
     "pcat-command-cnpm": "^1.0.3"
   },
