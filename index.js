@@ -238,7 +238,7 @@ fis.pcat = function(option) {
         })
         .match(/^\/page\/(.*?\/.*?\.(html)$)/i, {
             release: `${packageJson.dir}/${packageJson.name}/${releaseConfig.tag?releaseConfig.tag+"/":""}$1`,
-            useHash: USE_HASH,
+            useHash: false,
             useSameNameRequire: true,
             isPage: true,
             extras: {
@@ -558,9 +558,9 @@ fis.pcat = function(option) {
                     staticOrg
                 ]
             })
-            .match('*.png', {
-                optimizer: fis.plugin('png-compressor')
-            })
+            // .match('*.png', {
+            //     optimizer: fis.plugin('png-compressor')
+            // })
     }
     if (!!userName && (media === 'ol' || media === 'online')) {
         fis
