@@ -97,19 +97,19 @@ fis.pcat = function(option) {
         dev: option.domain.dev,
         dqa: option.domain.dev,
         ssi: option.domain.dev,
-        qa: {
+        qa: option.domain.qa || {
             'static': '//ue.pc.com.cn',
             'img': '//ueimg.pc.com.cn',
             'page': '//zzpcat.' + subDomain + '/qa/page',
             'tpl': '//zzpcat.' + subDomain + '/qa/tpl'
         },
-        ol: {
+        ol: option.domain.ol || {
             'static': '//ue.3conline.com',
             'img': '//ueimg.3conline.com',
             'page': '//zzpcat.' + subDomain + '/ol/page',
             'tpl': '//zzpcat.' + subDomain + '/ol/tpl'
         },
-        online: {
+        online: option.domain.online || {
             'static': '//ue.3conline.com',
             'img': '//ueimg.3conline.com',
             'page': '//zzpcat.' + subDomain + '/online/page',
