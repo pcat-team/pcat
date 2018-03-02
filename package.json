@@ -1,6 +1,6 @@
 {
   "name": "pcat",
-  "version": "2.7.2",
+  "version": "2.8.0",
   "description": "pcground front-end node.js tool",
   "main": "index.js",
   "scripts": {
@@ -24,11 +24,9 @@
     "url": "git+https://github.com/jincdream/pcat.git"
   },
   "dependencies": {
-    "liftoff": "^2.1.0",
-    "minimist": "^1.1.1",
-    "fis-mini": "^3.3.0",
+    "fis3": "^3.4.0",
     "fs-extra":"0.30.0",
-    "request": "2.69.0",
+    "request": "^2.69.0",
     "fis3-hook-commonjs": "0.1.8",
     "fis3-hook-components": "1.0.4",
     "fis3-parser-html-uri": "1.0.1",
@@ -45,7 +43,6 @@
     "pcat-server-node": "^1.2.0",
     "pcat-deploy-cms": "^1.0.5",
     "fis3-preprocessor-autoprefixer": "^0.1.1",
-    "fis-spriter-csssprites": "^0.4.0",
     "pcat-deploy-local-deliver":"^1.0.0",
     "pcat-command-cnpm": "^1.0.3"
   },

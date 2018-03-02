@@ -1,6 +1,6 @@
 'use strict'
 const fs = require('fs')
-var fis = module.exports = require('fis-mini');
+var fis = module.exports = require('fis3');
 var shell = require('child_process').exec
 
 fis.require.prefixes.unshift('pcat');
