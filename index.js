@@ -547,7 +547,7 @@ fis.pcat = function(option) {
                 ]
             })
             .match('*.{es,jsx}', {
-                parser: fis.plugin("babel-6.x", option.babelConfig || {}, 'append'),
+                parser: fis.plugin("babel", option.babelConfig || {}, 'append'),
                 rExt: '.js'
             })
 
