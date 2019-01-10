@@ -40,14 +40,16 @@ var userName = releaseConfig.author || ''
 // 忽略文件、文件夹
 fis.set('project.ignore', ['output/**', 'fis-conf.js', 'node_modules/**']); // set 为覆盖不是叠加
 
-fis.set('project.fileType.text', 'jsx');
+// fis.set('project.fileType.text', 'jsx');
 
-// es6/es7
-fis.config.set('project.fileType.text', 'esx');
+// // es6/es7
+// fis.config.set('project.fileType.text', 'esx');
 
-// typescript
-fis.config.set('project.fileType.text', 'ts');
-fis.config.set('project.fileType.text', 'tsx');
+// // typescript
+// fis.config.set('project.fileType.text', 'ts');
+// fis.config.set('project.fileType.text', 'tsx');
+
+fis.config.set('project.fileType.text', 'ts,tsx,esx,jsx,cms');
 
 // 自动定位requrie的id
 fis.config.set("component.dir", "modules");
@@ -390,7 +392,7 @@ fis.pcat = function(option) {
         })
 
 
-        .match("*.html", {
+        .match("*.{html,tpl,cms}", {
             parser: [fis.plugin("widget-load", {
                 project: fis.get("PCAT.project"),
                 tagName: fis.get("PCAT.tagName"),
