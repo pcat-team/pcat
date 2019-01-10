@@ -305,7 +305,7 @@ fis.pcat = function(option) {
             }),
             domain: DOMAIN_IMG
         })
-        .match(/^\/widget\/(.*?\/.*?\.(html|tpl)$)/i, {
+        .match(/^\/widget\/(.*?\/.*?\.(html|tpl|cms)$)/i, {
             release: "${pc-dir}/${pc-project}/$1",
             useHash: USE_HASH,
             isHtmlLike: true,
