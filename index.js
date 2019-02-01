@@ -565,16 +565,39 @@ fis.pcat = function(option) {
             // })
     }
     if (!!userName && (media === 'ol' || media === 'online')) {
-        fis
+        // fis
+        //     .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
+        //         deploy: [fis.plugin('local-deliver', {
+        //             to: PAGE_DIR,
+        //             tag: releaseConfig.tag
+        //         }), fis.plugin('cms2', {
+        //             project: packageJson.name,
+        //             userName: userName,
+        //             api: commonConfig.cmsUpLoad || "cms." + subDomain
+        //         }, "append")]
+        //     })
+
+        if(option.deployCms){
+
+            fis
             .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
                 deploy: [fis.plugin('local-deliver', {
                     to: PAGE_DIR,
                     tag: releaseConfig.tag
-                }), fis.plugin('cms', {
+                }), fis.plugin('cms2', {
                     project: packageJson.name,
                     userName: userName,
                     api: commonConfig.cmsUpLoad || "cms." + subDomain
                 }, "append")]
             })
+        }else{
+            fis
+            .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
+                deploy: [fis.plugin('local-deliver', {
+                    to: PAGE_DIR,
+                    tag: releaseConfig.tag
+                })]
+            })
+        }
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "pcat",
-  "version": "2.8.9",
+  "version": "2.8.13",
   "description": "pcground front-end node.js tool",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,7 @@
     "fis-parser-less-2.x": "0.1.4",
     "pcat-parser-babel": "^1.0.0",
     "fis3-parser-typescript": "^1.2.0",
-    "pcat-postpackager-autocombo": "^1.0.0",
+    "pcat-postpackager-autocombo": "^1.1.0",
     "pcat-parser-widget-load": "^1.2.1",
     "pcat-packager-widget-render": "^1.0.10",
     "pcat-packager-ssi-render": "^1.0.0",
@@ -41,7 +41,7 @@
     "pcat-command-create": "^2.1.0",
     "pcat-command-www1": "^0.0.1",
     "pcat-server-node": "^1.2.0",
-    "pcat-deploy-cms": "^1.0.5",
+    "pcat-deploy-cms2": "^1.0.5",
     "fis3-preprocessor-autoprefixer": "^0.1.1",
     "pcat-deploy-local-deliver":"^1.0.0",
     "pcat-command-cnpm": "^1.0.3"
