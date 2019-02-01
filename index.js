@@ -157,6 +157,7 @@ fis.pcat = function(option) {
 
     fis.set("PCAT", {
         x: option,
+        inlineFirstScreenCss:option.inlineFirstScreenCss,
         useCombo: option.combo,
         project: packageJson.name,
         version: packageJson.version,
@@ -465,6 +466,7 @@ fis.pcat = function(option) {
             }), fis.plugin("ssi-render")],
             postpackager: [fis.plugin("autocombo", {
                 domain: DOMAIN_STATIC,
+                inlineFirstScreenCss:fis.get("PCAT.inlineFirstScreenCss"),
                 combo: fis.get("PCAT.useCombo")
             }), require("./plugin/ssi.js")],
             spriter: fis.plugin('csssprites')
