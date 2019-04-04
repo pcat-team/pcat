@@ -1,6 +1,6 @@
 {
   "name": "pcat",
-  "version": "2.9.1",
+  "version": "2.9.2",
   "description": "pcground front-end node.js tool",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "fis3": "^3.4.0",
-    "fs-extra":"0.30.0",
+    "fs-extra": "0.30.0",
     "request": "^2.69.0",
     "fis3-hook-commonjs": "0.1.8",
     "fis3-hook-components": "1.0.4",
@@ -43,7 +43,7 @@
     "pcat-server-node": "^1.2.0",
     "pcat-deploy-cms2": "^1.0.5",
     "fis3-preprocessor-autoprefixer": "^0.1.1",
-    "pcat-deploy-local-deliver":"^1.0.0",
+    "pcat-deploy-local-deliver": "^1.0.0",
     "pcat-command-cnpm": "^1.0.3"
   },
   "bugs": {

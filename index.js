@@ -157,7 +157,7 @@ fis.pcat = function(option) {
 
     fis.set("PCAT", {
         x: option,
-        inlineFirstScreenCss:option.inlineFirstScreenCss,
+        inlineFirstScreenCss: option.inlineFirstScreenCss,
         useCombo: option.combo,
         project: packageJson.name,
         version: packageJson.version,
@@ -422,7 +422,7 @@ fis.pcat = function(option) {
             parser: function(content, file) {
 
                 // 先判断是否为buffer格式
-                if(content && typeof content === "object" && Buffer.isBuffer(content)){
+                if (content && typeof content === "object" && Buffer.isBuffer(content)) {
                     content = fis.util.readBuffer(content);
                 }
 
@@ -454,7 +454,10 @@ fis.pcat = function(option) {
                     //for server preview
                     let hash = file.getHash()
                     let root = `/${media}/page/${site}${media ==='dev' ? file.release : file.release.replace('\.html',`_${hash}.html`)}`
-                    file.extras ? (file.extras.hash = hash, file.extras.path = root) : file.extras = { hash: hash, path: root }
+                    file.extras ? (file.extras.hash = hash, file.extras.path = root) : file.extras = {
+                        hash: hash,
+                        path: root
+                    }
                 })
 
 
@@ -466,7 +469,7 @@ fis.pcat = function(option) {
             }), fis.plugin("ssi-render")],
             postpackager: [fis.plugin("autocombo", {
                 domain: DOMAIN_STATIC,
-                inlineFirstScreenCss:fis.get("PCAT.inlineFirstScreenCss"),
+                inlineFirstScreenCss: fis.get("PCAT.inlineFirstScreenCss"),
                 combo: fis.get("PCAT.useCombo")
             }), require("./plugin/ssi.js")],
             spriter: fis.plugin('csssprites')
@@ -562,9 +565,9 @@ fis.pcat = function(option) {
                     staticOrg
                 ]
             })
-            // .match('*.png', {
-            //     optimizer: fis.plugin('png-compressor')
-            // })
+        // .match('*.png', {
+        //     optimizer: fis.plugin('png-compressor')
+        // })
     }
     if (!!userName && (media === 'ol' || media === 'online')) {
         // fis
@@ -579,27 +582,29 @@ fis.pcat = function(option) {
         //         }, "append")]
         //     })
 
-        if(option.deployCms){
+
+        const deployCms = (option.deployCms == undefined) ? true : option.deployCms;
+        if (deployCms) {
 
             fis
-            .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
-                deploy: [fis.plugin('local-deliver', {
-                    to: PAGE_DIR,
-                    tag: releaseConfig.tag
-                }), fis.plugin('cms2', {
-                    project: packageJson.name,
-                    userName: userName,
-                    api: commonConfig.cmsUpLoad || "cms." + subDomain
-                }, "append")]
-            })
-        }else{
+                .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
+                    deploy: [fis.plugin('local-deliver', {
+                        to: PAGE_DIR,
+                        tag: releaseConfig.tag
+                    }), fis.plugin('cms2', {
+                        project: packageJson.name,
+                        userName: userName,
+                        api: commonConfig.cmsUpLoad || "cms." + subDomain
+                    }, "append")]
+                })
+        } else {
             fis
-            .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
-                deploy: [fis.plugin('local-deliver', {
-                    to: PAGE_DIR,
-                    tag: releaseConfig.tag
-                })]
-            })
+                .match(/^\/page\/(.*\/)*([^\/]+\.html$)/i, {
+                    deploy: [fis.plugin('local-deliver', {
+                        to: PAGE_DIR,
+                        tag: releaseConfig.tag
+                    })]
+                })
         }
     }
 }
